@@ -419,6 +419,117 @@
       line-height: 1.7;
     }
 
+    /* ── DEMO PROJECTS ── */
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+    .demo-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      opacity: 0; transform: translateY(20px);
+      transition: opacity 0.5s, transform 0.5s;
+    }
+    .demo-card.visible { opacity: 1; transform: none; }
+    .demo-card-wide {
+      grid-column: 1 / -1;
+    }
+    .demo-card-header {
+      padding: 24px 28px 20px;
+      display: flex; justify-content: space-between; align-items: flex-start;
+      gap: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .demo-tag {
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--accent2); margin-bottom: 6px;
+    }
+    .demo-title {
+      font-family: var(--heading-font); font-weight: 800;
+      font-size: 22px; letter-spacing: 1px;
+      color: var(--text);
+    }
+    .demo-desc {
+      font-size: 12px; color: var(--muted);
+      line-height: 1.6; max-width: 340px; text-align: right;
+    }
+    .demo-frame {
+      position: relative;
+      width: 100%; height: 340px;
+      background: var(--bg);
+      overflow: hidden; cursor: crosshair;
+    }
+    .demo-frame-tall { height: 420px; }
+    .demo-frame canvas {
+      position: absolute; inset: 0;
+      width: 100%; height: 100%; display: block;
+    }
+    .demo-overlay {
+      position: absolute; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: rgba(6,13,26,0.82);
+      backdrop-filter: blur(4px);
+      cursor: pointer; z-index: 10;
+      transition: opacity 0.5s;
+    }
+    .demo-overlay.hidden { opacity: 0; pointer-events: none; }
+    .demo-play-btn {
+      width: 56px; height: 56px;
+      border: 1.5px solid var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 12px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .demo-overlay:hover .demo-play-btn {
+      transform: scale(1.12);
+      box-shadow: 0 0 30px rgba(168,212,255,0.25);
+    }
+    .demo-play-btn::after {
+      content: '';
+      width: 0; height: 0;
+      border-style: solid;
+      border-width: 9px 0 9px 16px;
+      border-color: transparent transparent transparent var(--accent);
+      margin-left: 3px;
+    }
+    .demo-play-label {
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 2px; text-transform: uppercase;
+      color: var(--muted);
+    }
+    .demo-controls {
+      position: absolute; top: 12px; right: 12px;
+      display: flex; flex-direction: column; gap: 6px;
+      z-index: 5;
+    }
+    .dc-btn {
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1px; text-transform: uppercase;
+      padding: 6px 10px;
+      border: 1px solid var(--border);
+      background: rgba(6,13,26,0.85);
+      color: var(--muted); cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+    }
+    .dc-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .dc-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(168,212,255,0.06); }
+    .demo-hud {
+      position: absolute; top: 12px; left: 12px;
+      font-family: var(--mono); font-size: 11px;
+      color: var(--accent); letter-spacing: 1px;
+      display: flex; gap: 20px; z-index: 5;
+    }
+    .pg-hint {
+      font-family: var(--mono); font-size: 10px;
+      letter-spacing: 1px; color: var(--muted);
+      margin-top: 4px; text-align: right;
+    }
+
     /* ── SKILLS ── */
     #skills { border-top: 1px solid var(--border); }
 
@@ -629,34 +740,74 @@
     <div class="container">
       <div class="section-label">02 — Projects</div>
       <h2 class="section-title">BUILDS</h2>
-      <div class="projects-grid">
 
-        <div class="project-card">
-          <div class="project-number">01</div>
-          <div class="project-tag">Unity / C#</div>
-          <div class="project-name">UNITY<br/>GAMES</div>
-          <p class="project-desc">Developed multiple games covering both 3D and 2D workflows — mechanics design, scripting, and environment work.</p>
+      <!-- DEMO GRID -->
+      <div class="demo-grid">
+
+        <!-- 1: Physics Sandbox -->
+        <div class="demo-card">
+          <div class="demo-card-header">
+            <div>
+              <div class="demo-tag">JavaScript · Canvas</div>
+              <div class="demo-title">PHYSICS SANDBOX</div>
+            </div>
+            <div class="demo-desc">Custom particle physics engine — gravity, collisions, explosion forces, glow trails.</div>
+          </div>
+          <div class="demo-frame" id="proj-sandbox-wrap">
+            <canvas id="proj-sandbox-canvas"></canvas>
+            <div id="proj-sandbox-intro" class="demo-overlay">
+              <div class="demo-play-btn"></div>
+              <span class="demo-play-label">Click to play</span>
+            </div>
+            <div class="demo-controls" id="proj-sandbox-ui">
+              <button class="dc-btn active" id="ps-balls">● Balls</button>
+              <button class="dc-btn" id="ps-explode">✦ Explode</button>
+              <button class="dc-btn" id="ps-gravity">↓ Gravity</button>
+              <button class="dc-btn" id="ps-clear">✕ Clear</button>
+            </div>
+          </div>
         </div>
 
-        <div class="project-card">
-          <div class="project-number">02</div>
-          <div class="project-tag">MIPS Assembly</div>
-          <div class="project-name">BALL BOUNCING<br/>GAME</div>
-          <p class="project-desc">Built a ball bouncing game using MIPS assembly — low-level systems programming, direct memory management.</p>
+        <!-- 2: Breakout -->
+        <div class="demo-card">
+          <div class="demo-card-header">
+            <div>
+              <div class="demo-tag">MIPS Assembly</div>
+              <div class="demo-title">BREAKOUT GAME</div>
+            </div>
+            <div class="demo-desc">Ported from MIPS assembly — paddle, ball physics, block destruction, all collision logic rebuilt in JS.</div>
+          </div>
+          <div class="demo-frame" id="breakout-wrap">
+            <canvas id="breakout-canvas"></canvas>
+            <div id="breakout-intro" class="demo-overlay">
+              <div class="demo-play-btn"></div>
+              <span class="demo-play-label">Click to play</span>
+            </div>
+            <div class="demo-hud" id="breakout-hud" style="display:none;">
+              <span id="bo-score">Score: 0</span>
+              <span id="bo-lives">Lives: 3</span>
+            </div>
+          </div>
         </div>
 
-        <div class="project-card">
-          <div class="project-number">03</div>
-          <div class="project-tag">C</div>
-          <div class="project-name">FUNCTIONAL<br/>SHELL</div>
-          <p class="project-desc">Implemented a working Unix-style shell in C with process management, piping, and command parsing.</p>
-        </div>
-
-        <div class="project-card">
-          <div class="project-number">04</div>
-          <div class="project-tag">HTML · CSS · JS</div>
-          <div class="project-name">RESTAURANT<br/>ORDERING SITE</div>
-          <p class="project-desc">Full restaurant ordering interface with dynamic menu, cart management, and order submission — built from scratch.</p>
+        <!-- 3: PittGuard Graph -->
+        <div class="demo-card demo-card-wide">
+          <div class="demo-card-header">
+            <div>
+              <div class="demo-tag">Java · BFS · Dijkstra</div>
+              <div class="demo-title">PITTGUARD — NETWORK SECURITY VISUALIZER</div>
+            </div>
+            <div class="demo-desc">BFS infection spread + Dijkstra patch routing on a live network graph. Red = vulnerable, blue = secure. Click nodes to toggle. Visualizes the exact algorithms from the Java source.</div>
+          </div>
+          <div class="demo-frame demo-frame-tall" id="pittguard-wrap">
+            <canvas id="pittguard-canvas"></canvas>
+            <div class="demo-controls" id="pittguard-ui">
+              <button class="dc-btn active" id="pg-infect">⚡ Infect</button>
+              <button class="dc-btn" id="pg-patch">🛡 Patch</button>
+              <button class="dc-btn" id="pg-reset">↺ Reset</button>
+              <span class="pg-hint" id="pg-hint">Click a node to start</span>
+            </div>
+          </div>
         </div>
 
       </div>
