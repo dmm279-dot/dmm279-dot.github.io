@@ -735,6 +735,133 @@
       nav.classList.toggle('scrolled', window.scrollY > 60);
     });
 
+
+    // ── Audio Engine ──
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    let audioCtx = null;
+
+    function getAudio() {
+      if (!audioCtx) audioCtx = new AudioCtx();
+      return audioCtx;
+    }
+
+    // Soft hover tick — very short, quiet sine blip
+    function soundHover() {
+      try {
+        const ac = getAudio();
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(900, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(600, ac.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.04, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.04);
+        osc.start(ac.currentTime);
+        osc.stop(ac.currentTime + 0.04);
+      } catch(e) {}
+    }
+
+    // Button click — sharp tick
+    function soundClick() {
+      try {
+        const ac = getAudio();
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(400, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, ac.currentTime + 0.06);
+        gain.gain.setValueAtTime(0.12, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.06);
+        osc.start(ac.currentTime);
+        osc.stop(ac.currentTime + 0.06);
+      } catch(e) {}
+    }
+
+    // Ball spawn pop — quick high blip
+    function soundPop(pitch = 600) {
+      try {
+        const ac = getAudio();
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(pitch, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(pitch * 0.4, ac.currentTime + 0.08);
+        gain.gain.setValueAtTime(0.08, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.08);
+        osc.start(ac.currentTime);
+        osc.stop(ac.currentTime + 0.08);
+      } catch(e) {}
+    }
+
+    // Ball bounce — low thud
+    function soundBounce() {
+      try {
+        const ac = getAudio();
+        const osc = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(180, ac.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(60, ac.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.1, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.1);
+        osc.start(ac.currentTime);
+        osc.stop(ac.currentTime + 0.1);
+      } catch(e) {}
+    }
+
+    // Explosion — noise burst + sub thud
+    function soundExplode() {
+      try {
+        const ac = getAudio();
+        // noise burst
+        const bufSize = ac.sampleRate * 0.3;
+        const buf = ac.createBuffer(1, bufSize, ac.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1);
+        const noise = ac.createBufferSource();
+        noise.buffer = buf;
+        const filter = ac.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 400;
+        filter.Q.value = 0.5;
+        const gainN = ac.createGain();
+        gainN.gain.setValueAtTime(0.3, ac.currentTime);
+        gainN.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.3);
+        noise.connect(filter); filter.connect(gainN); gainN.connect(ac.destination);
+        noise.start(ac.currentTime); noise.stop(ac.currentTime + 0.3);
+        // sub thud
+        const sub = ac.createOscillator();
+        const gainS = ac.createGain();
+        sub.connect(gainS); gainS.connect(ac.destination);
+        sub.type = 'sine';
+        sub.frequency.setValueAtTime(120, ac.currentTime);
+        sub.frequency.exponentialRampToValueAtTime(30, ac.currentTime + 0.25);
+        gainS.gain.setValueAtTime(0.4, ac.currentTime);
+        gainS.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.25);
+        sub.start(ac.currentTime); sub.stop(ac.currentTime + 0.25);
+      } catch(e) {}
+    }
+
+    // Attach hover sound to all interactive elements
+    let lastHover = 0;
+    function attachHoverSounds() {
+      const targets = document.querySelectorAll('a, button, .btn, .sb-btn, .project-card, .skill-chip, #sandbox-intro');
+      targets.forEach(el => {
+        el.addEventListener('mouseenter', () => {
+          const now = Date.now();
+          if (now - lastHover < 60) return; // throttle
+          lastHover = now;
+          soundHover();
+        });
+        el.addEventListener('click', () => soundClick());
+      });
+    }
+    attachHoverSounds();
+
     // ── Intersection observer ──
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
@@ -814,6 +941,7 @@
     }
 
     function spawnBurst(cx, cy, count) {
+      soundPop(400 + Math.random() * 400);
       for (let i = 0; i < count; i++) {
         const angle = (Math.PI * 2 / count) * i + Math.random() * 0.5;
         const speed = 3 + Math.random() * 5;
@@ -832,6 +960,7 @@
     }
 
     function explode(cx, cy) {
+      soundExplode();
       // Push nearby balls away
       balls.forEach(b => {
         const dx = b.x - cx, dy = b.y - cy;
@@ -879,16 +1008,18 @@
         b.y += b.vy;
 
         // Walls
-        if (b.x - b.r < 0) { b.x = b.r; b.vx *= -0.7; }
-        if (b.x + b.r > W) { b.x = W - b.r; b.vx *= -0.7; }
+        if (b.x - b.r < 0) { b.x = b.r; b.vx *= -0.7; if(Math.abs(b.vx)>1) tryBounceSound(); }
+        if (b.x + b.r > W) { b.x = W - b.r; b.vx *= -0.7; if(Math.abs(b.vx)>1) tryBounceSound(); }
 
         // Floor/ceiling bounce
         if (gravityDir > 0 && b.y + b.r > H) {
           b.y = H - b.r; b.vy *= -0.6;
+          if (Math.abs(b.vy) > 1) tryBounceSound();
           if (Math.abs(b.vx) < 0.1) b.vx = 0;
         }
         if (gravityDir < 0 && b.y - b.r < 0) {
           b.y = b.r; b.vy *= -0.6;
+          if (Math.abs(b.vy) > 1) tryBounceSound();
         }
 
         // Trail
@@ -922,6 +1053,13 @@
 
       // Cap ball count
       if (balls.length > 300) balls.splice(0, balls.length - 300);
+    }
+
+    // ── Bounce sound throttle ──
+    let lastBounce = 0;
+    function tryBounceSound() {
+      const now = Date.now();
+      if (now - lastBounce > 80) { soundBounce(); lastBounce = now; }
     }
   </script>
 </body>
