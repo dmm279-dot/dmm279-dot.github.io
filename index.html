@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Domenic Maritato — Portfolio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     :root {
       --bg: #060d1a;
@@ -14,9 +14,9 @@
       --accent2: #c8eeff;
       --text: #e8f4ff;
       --muted: #5a7a99;
-      --heading-font: 'Syne', sans-serif;
+      --heading-font: 'Rajdhani', sans-serif;
       --mono: 'Space Mono', monospace;
-      --body: 'Inter', sans-serif;
+      --body: 'Outfit', sans-serif;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -745,25 +745,19 @@
       return audioCtx;
     }
 
-    // Hover — airy filtered noise sweep
+    // Hover — barely-there high sine ping
     function soundHover() {
       try {
         const ac = getAudio();
-        const bufSize = Math.floor(ac.sampleRate * 0.07);
-        const buf = ac.createBuffer(1, bufSize, ac.sampleRate);
-        const data = buf.getChannelData(0);
-        for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1);
-        const src = ac.createBufferSource();
-        src.buffer = buf;
-        const filter = ac.createBiquadFilter();
-        filter.type = 'highpass';
-        filter.frequency.setValueAtTime(3000, ac.currentTime);
-        filter.frequency.exponentialRampToValueAtTime(6000, ac.currentTime + 0.07);
+        const osc = ac.createOscillator();
         const gain = ac.createGain();
-        gain.gain.setValueAtTime(0.06, ac.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.07);
-        src.connect(filter); filter.connect(gain); gain.connect(ac.destination);
-        src.start(ac.currentTime); src.stop(ac.currentTime + 0.07);
+        osc.connect(gain); gain.connect(ac.destination);
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1800, ac.currentTime);
+        gain.gain.setValueAtTime(0.018, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.05);
+        osc.start(ac.currentTime);
+        osc.stop(ac.currentTime + 0.05);
       } catch(e) {}
     }
 
