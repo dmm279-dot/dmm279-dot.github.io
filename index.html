@@ -716,15 +716,16 @@
       <div class="section-label">05 — Contact</div>
       <div class="contact-big">LET'S<br/><span>WORK.</span></div>
       <div class="contact-row">Pittsburgh, PA</div>
-      <div class="contact-row">domenic.maritato@gmail.com</div>
-      <div class="contact-row">412-865-8696</div>
+      <div class="contact-row">[your email here]</div>
+      <div class="contact-row">[your phone here]</div>
       <br/><br/>
-      <a href="mailto:domenic.maritato@gmail.com" class="btn" style="margin-top:8px;">Send a Message</a>
+      <a href="mailto:you@email.com" class="btn" style="margin-top:8px;">Send a Message</a>
     </div>
   </section>
 
   <footer>
     <span>Domenic Maritato</span>
+    <span>© 2025</span>
   </footer>
 
   <script>
@@ -1210,23 +1211,30 @@
 
       function buildGraph() {
         const W = canvas.width, H = canvas.height;
-        const count = Math.floor(W / 60);
+        const cellSize = Math.min(W, H) < 400 ? 55 : 70;
+        const cols = Math.max(3, Math.floor((W - 40) / cellSize));
+        const rows = Math.max(3, Math.floor((H - 40) / cellSize));
+        const xStep = (W - 40) / cols;
+        const yStep = (H - 40) / rows;
+        const jitter = Math.min(xStep, yStep) * 0.35;
         nodes = [];
-        for (let i = 0; i < count; i++) {
-          nodes.push({
-            x: 40 + Math.random() * (W - 80),
-            y: 40 + Math.random() * (H - 80),
-            state: 'neutral',
-            id: i
-          });
+        for (let r = 0; r <= rows; r++) {
+          for (let c = 0; c <= cols; c++) {
+            nodes.push({
+              x: 20 + c * xStep + (Math.random() - 0.5) * jitter * 2,
+              y: 20 + r * yStep + (Math.random() - 0.5) * jitter * 2,
+              state: 'neutral',
+              id: nodes.length
+            });
+          }
         }
+        const connectDist = Math.max(xStep, yStep) * 1.6;
         edges = [];
         for (let i = 0; i < nodes.length; i++) {
           for (let j = i + 1; j < nodes.length; j++) {
             const dx = nodes[i].x - nodes[j].x;
             const dy = nodes[i].y - nodes[j].y;
-            const d = Math.sqrt(dx*dx + dy*dy);
-            if (d < 160) edges.push([i, j]);
+            if (Math.sqrt(dx*dx + dy*dy) < connectDist) edges.push([i, j]);
           }
         }
       }
