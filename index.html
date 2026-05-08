@@ -158,20 +158,6 @@
     .btn.ghost { background: transparent; color: var(--accent); }
     .btn.ghost:hover { background: var(--accent); color: var(--bg); }
 
-    .hero-scroll-hint {
-      position: absolute; bottom: 28px; left: 32px;
-      font-family: var(--mono); font-size: 11px;
-      color: var(--muted); letter-spacing: 2px;
-      writing-mode: vertical-rl;
-      opacity: 0; animation: fadeUp 1s 1s forwards;
-      display: flex; align-items: center; gap: 10px;
-    }
-    .hero-scroll-hint::before {
-      content: '';
-      display: block; width: 1px; height: 60px;
-      background: linear-gradient(to bottom, transparent, var(--muted));
-    }
-
     section { padding: 100px 0; }
 
     .section-label {
@@ -457,12 +443,57 @@
     }
 
     @media (max-width: 720px) {
-      .exp-item { grid-template-columns: 1fr; gap: 16px; }
-      .skills-layout { grid-template-columns: 1fr; gap: 48px; }
-      .edu-block { flex-direction: column; gap: 16px; }
-      .edu-year { font-size: 48px; }
+      .container { padding: 0 20px; }
+
+      nav { padding: 16px 20px; }
       nav .nav-links { display: none; }
+
+      section { padding: 64px 0; }
+
+      #hero { min-height: 100svh; align-items: flex-end; }
+      .hero-left { padding: 80px 20px 60px; max-width: 100%; }
+      .hero-sub { font-size: 13px; }
+      .hero-cta { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .btn { width: 100%; text-align: center; padding: 14px 20px; }
+
+      .section-title { margin-bottom: 36px; }
+
+      .exp-item { grid-template-columns: 1fr; gap: 12px; padding: 28px 0; }
+      .exp-title { font-size: 22px; }
+
       .demo-grid { grid-template-columns: 1fr; }
+      .demo-card-header { flex-direction: column; gap: 8px; }
+      .demo-desc { text-align: left; max-width: 100%; }
+      .demo-frame { height: 280px; }
+      .demo-frame-tall { height: 320px; }
+
+      #boggle-wrap { height: auto !important; }
+      #boggle-ui {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 20px !important;
+        padding: 16px !important;
+        height: auto !important;
+      }
+      #boggle-board-wrap { align-self: center; }
+
+      .skills-layout { grid-template-columns: 1fr; gap: 36px; }
+
+      .edu-block { flex-direction: column; gap: 12px; }
+      .edu-year { font-size: 48px; }
+      .edu-school { font-size: 26px; }
+
+      .contact-big { font-size: clamp(40px, 14vw, 80px); margin-bottom: 32px; }
+
+      footer { padding: 24px 20px; flex-direction: column; gap: 8px; text-align: center; }
+    }
+
+    @media (max-width: 420px) {
+      .hero-left { padding: 72px 16px 48px; }
+      .container { padding: 0 16px; }
+      .demo-frame { height: 240px; }
+      .demo-frame-tall { height: 280px; }
+      .dc-btn { font-size: 9px; padding: 5px 8px; }
     }
   </style>
 </head>
@@ -491,7 +522,6 @@
         <a href="#projects" class="btn">View Projects</a>
         <a href="#contact" class="btn ghost">Contact Me</a>
       </div>
-      <div class="hero-scroll-hint">Scroll</div>
     </div>
   </section>
 
@@ -553,10 +583,10 @@
               <span class="demo-play-label">Click to play</span>
             </div>
             <div class="demo-controls" id="proj-sandbox-ui" style="display:none;">
-              <button class="dc-btn active" id="ps-balls">● Balls</button>
-              <button class="dc-btn" id="ps-explode">✦ Explode</button>
-              <button class="dc-btn" id="ps-gravity">↓ Gravity</button>
-              <button class="dc-btn" id="ps-clear">✕ Clear</button>
+              <button class="dc-btn active" id="ps-balls">Balls</button>
+              <button class="dc-btn" id="ps-explode">Explode</button>
+              <button class="dc-btn" id="ps-gravity">Gravity</button>
+              <button class="dc-btn" id="ps-clear">Clear</button>
             </div>
           </div>
         </div>
@@ -593,10 +623,41 @@
           <div class="demo-frame demo-frame-tall" id="pittguard-wrap">
             <canvas id="pittguard-canvas"></canvas>
             <div class="demo-controls" id="pittguard-ui">
-              <button class="dc-btn active" id="pg-infect">⚡ Infect</button>
-              <button class="dc-btn" id="pg-patch">🛡 Patch</button>
-              <button class="dc-btn" id="pg-reset">↺ Reset</button>
-              <span class="pg-hint" id="pg-hint">Click a node to start</span>
+              <button class="dc-btn active" id="pg-infect">Infect</button>
+              <button class="dc-btn" id="pg-patch">Patch</button>
+              <button class="dc-btn" id="pg-reset">Reset</button>
+              <span class="pg-hint" id="pg-hint">Tap a node to start</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="demo-card demo-card-wide">
+          <div class="demo-card-header">
+            <div>
+              <div class="demo-tag">Java · DFS · Backtracking · Trie</div>
+              <div class="demo-title">BOGGLE GAME ENGINE</div>
+            </div>
+            <div class="demo-desc">DFS + backtracking word search on a random board. Pruned via prefix trie. Finds all valid words, checks adjacency, marks paths — mirrors the Java source exactly.</div>
+          </div>
+          <div class="demo-frame demo-frame-tall" id="boggle-wrap" style="cursor:default; height: 480px;">
+            <div id="boggle-ui" style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; gap: 48px; padding: 24px; flex-wrap: wrap;">
+              <div id="boggle-board-wrap" style="display:flex; flex-direction:column; gap:6px; flex-shrink:0;"></div>
+              <div style="flex:1; min-width:240px; max-width:380px; display:flex; flex-direction:column; gap:14px;">
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <input id="boggle-input" type="text" placeholder="Type a word..." autocomplete="off" spellcheck="false"
+                    style="font-family:var(--mono); font-size:13px; letter-spacing:1px; text-transform:uppercase; background:var(--bg); border:1px solid var(--border); color:var(--text); padding:10px 14px; flex:1; outline:none; transition: border-color 0.2s;"/>
+                  <button id="boggle-submit" class="dc-btn" style="padding: 10px 14px;">CHECK</button>
+                </div>
+                <div id="boggle-feedback" style="font-family:var(--mono); font-size:12px; letter-spacing:1px; color:var(--muted); min-height:18px;"></div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                  <button id="boggle-solve" class="dc-btn">Find All Words</button>
+                  <button id="boggle-newboard" class="dc-btn">New Board</button>
+                </div>
+                <div style="border-top:1px solid var(--border); padding-top:12px;">
+                  <div style="font-family:var(--mono); font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--muted); margin-bottom:8px;" id="boggle-word-count"></div>
+                  <div id="boggle-word-list" style="display:flex; flex-wrap:wrap; gap:6px; max-height:160px; overflow-y:auto;"></div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -844,12 +905,24 @@
         else if (mode === 'explode') explode(x, y);
       });
 
+      canvas.addEventListener('touchstart', (e) => {
+        if (!running) return;
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        Array.from(e.changedTouches).forEach(t => {
+          const x = t.clientX - rect.left;
+          const y = t.clientY - rect.top;
+          if (mode === 'balls') spawnBurst(x, y, 6);
+          else if (mode === 'explode') explode(x, y);
+        });
+      }, { passive: false });
+
       document.getElementById('ps-balls').addEventListener('click', () => setMode('balls'));
       document.getElementById('ps-explode').addEventListener('click', () => setMode('explode'));
       document.getElementById('ps-gravity').addEventListener('click', () => {
         gravityDir *= -1;
         const btn = document.getElementById('ps-gravity');
-        btn.textContent = gravityDir > 0 ? '↓ Gravity' : '↑ Gravity';
+        btn.textContent = gravityDir > 0 ? 'Gravity Down' : 'Gravity Up';
         btn.classList.toggle('active');
       });
       document.getElementById('ps-clear').addEventListener('click', () => { balls = []; });
@@ -998,6 +1071,13 @@
         const rect = canvas.getBoundingClientRect();
         paddle.x = Math.max(0, Math.min(canvas.width - paddle.w, e.clientX - rect.left - paddle.w / 2));
       });
+
+      canvas.addEventListener('touchmove', e => {
+        if (!running || !paddle) return;
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        paddle.x = Math.max(0, Math.min(canvas.width - paddle.w, e.touches[0].clientX - rect.left - paddle.w / 2));
+      }, { passive: false });
 
       function init() {
         const W = canvas.width, H = canvas.height;
@@ -1241,32 +1321,40 @@
         step();
       }
 
-      canvas.addEventListener('click', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const mx = e.clientX - rect.left;
-        const my = e.clientY - rect.top;
+      function handlePittguardInteract(mx, my) {
         let closest = -1, minDist = 999;
         for (let i = 0; i < nodes.length; i++) {
           const d = Math.hypot(nodes[i].x - mx, nodes[i].y - my);
           if (d < minDist) { minDist = d; closest = i; }
         }
-        if (closest >= 0 && minDist < 30) {
+        if (closest >= 0 && minDist < 40) {
           if (mode === 'infect') bfsInfect(closest);
           else if (mode === 'patch') dijkstraPatch(closest);
         }
+      }
+
+      canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        handlePittguardInteract(e.clientX - rect.left, e.clientY - rect.top);
       });
+
+      canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        const rect = canvas.getBoundingClientRect();
+        handlePittguardInteract(e.touches[0].clientX - rect.left, e.touches[0].clientY - rect.top);
+      }, { passive: false });
 
       document.getElementById('pg-infect').addEventListener('click', () => {
         mode = 'infect';
         document.getElementById('pg-infect').classList.add('active');
         document.getElementById('pg-patch').classList.remove('active');
-        document.getElementById('pg-hint').textContent = 'Click a node to infect';
+        document.getElementById('pg-hint').textContent = 'Tap a node to infect';
       });
       document.getElementById('pg-patch').addEventListener('click', () => {
         mode = 'patch';
         document.getElementById('pg-patch').classList.add('active');
         document.getElementById('pg-infect').classList.remove('active');
-        document.getElementById('pg-hint').textContent = 'Click a node to patch';
+        document.getElementById('pg-hint').textContent = 'Tap a node to patch';
       });
       document.getElementById('pg-reset').addEventListener('click', () => {
         nodes.forEach(n => n.state = 'neutral');
@@ -1274,6 +1362,246 @@
         animating = false;
         draw();
       });
+    })();
+
+    (function initBoggle() {
+      const SIZE = 5;
+      let board = [];
+      let used = [];
+      let foundWords = [];
+      let highlightedPath = [];
+      let highlightTimer = null;
+
+      const WORD_LIST = [
+        'the','and','for','are','but','not','you','all','can','her','was','one','our','out','day','get','has','him','his','how','man','new','now','old','see','two','way','who','did','its','let','put','say','she','too','use','that','with','have','this','will','your','from','they','know','want','been','good','much','some','time','very','when','come','here','just','like','long','make','many','over','such','take','than','them','well','were','what','word','also','back','call','came','each','even','find','give','hand','help','high','hold','home','keep','kind','last','left','life','live','look','made','most','move','much','must','name','need','next','once','only','open','part','play','real','same','show','side','soon','tell','than','then','there','think','those','through','together','under','until','upon','used','very','what','when','while','world','would','year','about','after','again','along','among','asked','began','being','below','bring','built','carry','cause','close','comes','could','cover','cross','doing','doing','doing','drive','early','earth','eight','every','face','fall','five','four','free','full','goes','going','great','green','group','grow','hard','heat','help','here','high','hold','hour','idea','keep','king','knew','land','language','large','later','learn','leave','light','line','list','mean','more','move','near','never','night','nothing','often','open','order','other','place','point','power','press','print','quite','ready','river','round','run','said','school','second','seen','sense','small','sound','space','stand','start','state','still','stood','story','study','surface','system','table','three','told','trees','true','turn','under','until','water','where','which','while','white','whole','whose','wide','young',
+        'ace','age','ago','aim','air','ale','ant','ape','apt','arc','arm','art','ask','ate','awe','axe','aye','bad','bag','ban','bar','bat','bay','bed','bet','bid','big','bit','bog','bow','box','boy','bud','bug','bun','bus','buy','cab','cap','car','cat','cop','cow','cry','cup','cut','dab','dam','dim','dip','dog','dot','dry','dug','dye','ear','eat','egg','ego','elf','elk','elm','end','era','eve','eye','fad','fan','far','fat','fed','few','fig','fit','fix','fly','fog','fun','fur','gap','gas','gel','gem','gin','god','got','gum','gun','gut','guy','gym','hag','ham','hap','hat','hew','hex','hid','hip','hit','hog','hop','hot','hub','hug','hum','ice','icy','ill','imp','ink','ion','ire','irk','ivy','jab','jag','jam','jar','jaw','jet','jog','joy','jug','jut','keg','key','kin','kit','lab','lag','lap','law','lay','lea','led','leg','lid','lip','lit','log','lot','low','lug','mad','map','mat','mob','mod','mom','mop','mud','mug','nag','nap','net','nip','nit','nob','nod','nor','nun','nut','oak','oar','oat','odd','ode','off','oil','old','opt','orb','ore','owe','own','pad','pan','pat','paw','pea','peg','pen','pep','pet','pie','pig','pin','pit','pod','pop','pot','pox','pro','pry','pub','pug','pun','pup','raw','ray','red','rib','rid','rim','rip','rob','rod','rot','row','rub','rug','rum','run','rut','sag','sap','sat','saw','set','sew','sip','sir','sit','six','ski','sky','slab','sly','sob','sod','son','sop','sot','sow','spa','spy','sty','sub','sue','sum','sun','sup','tab','tan','tap','tar','tea','ten','tip','toe','ton','top','toy','try','tub','tug','tun','urn','use','van','vat','vet','via','vie','vim','vow','wag','war','wed','wet','wig','win','wit','woe','wok','won','woo','yak','yam','yap','yaw','yew','zap','zeal','zoom'
+      ];
+
+      function randomLetter() {
+        const weighted = 'AAABBBCCDDDEEEEEEFGGGHHIIIIIJKLLLLMMNNNNOOOOOPQRRRRRSSSSTTTTTUUUVVWWXYYZ';
+        return weighted[Math.floor(Math.random() * weighted.length)];
+      }
+
+      function newBoard() {
+        board = [];
+        used = [];
+        for (let r = 0; r < SIZE; r++) {
+          board.push([]);
+          used.push([]);
+          for (let c = 0; c < SIZE; c++) {
+            board[r].push(randomLetter());
+            used[r].push(false);
+          }
+        }
+        foundWords = [];
+        highlightedPath = [];
+        renderBoard();
+        document.getElementById('boggle-word-list').innerHTML = '';
+        document.getElementById('boggle-word-count').textContent = '';
+        document.getElementById('boggle-feedback').textContent = '';
+        document.getElementById('boggle-input').value = '';
+      }
+
+      function renderBoard(pathTiles) {
+        const wrap = document.getElementById('boggle-board-wrap');
+        wrap.innerHTML = '';
+        const tileSize = Math.min(56, Math.floor((window.innerWidth < 600 ? window.innerWidth - 80 : 300) / SIZE));
+        for (let r = 0; r < SIZE; r++) {
+          const row = document.createElement('div');
+          row.style.cssText = 'display:flex; gap:6px;';
+          for (let c = 0; c < SIZE; c++) {
+            const tile = document.createElement('div');
+            const isHighlighted = pathTiles && pathTiles.some(t => t[0] === r && t[1] === c);
+            const pathIndex = pathTiles ? pathTiles.findIndex(t => t[0] === r && t[1] === c) : -1;
+            tile.style.cssText = `
+              width:${tileSize}px; height:${tileSize}px;
+              display:flex; align-items:center; justify-content:center;
+              font-family:var(--heading-font); font-weight:800; font-size:${Math.floor(tileSize*0.42)}px;
+              letter-spacing:1px;
+              border: 1.5px solid ${isHighlighted ? 'var(--accent)' : 'var(--border)'};
+              background: ${isHighlighted ? 'rgba(168,212,255,0.15)' : 'var(--surface)'};
+              color: ${isHighlighted ? 'var(--accent)' : 'var(--text)'};
+              transition: all 0.15s;
+              position:relative;
+              box-shadow: ${isHighlighted ? '0 0 12px rgba(168,212,255,0.3)' : 'none'};
+              cursor: default;
+            `;
+            tile.textContent = board[r][c];
+            if (isHighlighted && pathTiles) {
+              const num = document.createElement('span');
+              num.style.cssText = `position:absolute; top:2px; right:4px; font-family:var(--mono); font-size:9px; color:var(--accent); opacity:0.7;`;
+              num.textContent = pathIndex + 1;
+              tile.appendChild(num);
+            }
+            row.appendChild(tile);
+          }
+          wrap.appendChild(row);
+        }
+      }
+
+      function searchPrefix(prefix) {
+        const p = prefix.toLowerCase();
+        let isWord = false;
+        let isPrefix = false;
+        for (const w of WORD_LIST) {
+          if (w === p) isWord = true;
+          if (w.startsWith(p) && w !== p) isPrefix = true;
+          if (isWord && isPrefix) break;
+        }
+        if (isWord && isPrefix) return 3;
+        if (isWord) return 2;
+        if (isPrefix) return 1;
+        return 0;
+      }
+
+      function dfs(r, c, current, results) {
+        if (r < 0 || c < 0 || r >= SIZE || c >= SIZE) return;
+        if (used[r][c]) return;
+        current.push(board[r][c]);
+        const str = current.join('');
+        const result = searchPrefix(str);
+        if (result === 0) { current.pop(); return; }
+        if (str.length >= 3 && (result === 2 || result === 3)) {
+          results.add(str.toLowerCase());
+        }
+        used[r][c] = true;
+        for (let br = -1; br <= 1; br++) {
+          for (let bc = -1; bc <= 1; bc++) {
+            if (br === 0 && bc === 0) continue;
+            dfs(r + br, c + bc, current, results);
+          }
+        }
+        used[r][c] = false;
+        current.pop();
+      }
+
+      function findAllWords() {
+        const results = new Set();
+        for (let r = 0; r < SIZE; r++) {
+          for (let c = 0; c < SIZE; c++) {
+            for (let rr = 0; rr < SIZE; rr++) used[rr].fill(false);
+            dfs(r, c, [], results);
+          }
+        }
+        return [...results].sort((a, b) => b.length - a.length || a.localeCompare(b));
+      }
+
+      function findWordPath(word) {
+        const w = word.toUpperCase();
+        for (let r = 0; r < SIZE; r++) {
+          for (let c = 0; c < SIZE; c++) {
+            for (let rr = 0; rr < SIZE; rr++) used[rr].fill(false);
+            const path = dfsPath(r, c, w, 0, []);
+            if (path) return path;
+          }
+        }
+        return null;
+      }
+
+      function dfsPath(r, c, word, idx, path) {
+        if (r < 0 || c < 0 || r >= SIZE || c >= SIZE) return null;
+        if (used[r][c]) return null;
+        if (board[r][c] !== word[idx]) return null;
+        const newPath = [...path, [r, c]];
+        if (idx === word.length - 1) return newPath;
+        used[r][c] = true;
+        for (let br = -1; br <= 1; br++) {
+          for (let bc = -1; bc <= 1; bc++) {
+            if (br === 0 && bc === 0) continue;
+            const result = dfsPath(r + br, c + bc, word, idx + 1, newPath);
+            if (result) { used[r][c] = false; return result; }
+          }
+        }
+        used[r][c] = false;
+        return null;
+      }
+
+      function setFeedback(msg, color) {
+        const el = document.getElementById('boggle-feedback');
+        el.textContent = msg;
+        el.style.color = color || 'var(--muted)';
+      }
+
+      function highlightWord(word) {
+        const path = findWordPath(word.toUpperCase());
+        if (highlightTimer) clearTimeout(highlightTimer);
+        if (path) {
+          renderBoard(path);
+          highlightTimer = setTimeout(() => renderBoard(), 2000);
+        }
+      }
+
+      document.getElementById('boggle-submit').addEventListener('click', () => {
+        const input = document.getElementById('boggle-input');
+        const word = input.value.trim().toLowerCase();
+        if (!word) return;
+        soundPop(500);
+        if (word.length < 3) {
+          setFeedback('Words must be 3+ letters.', 'var(--muted)');
+          return;
+        }
+        const inDict = searchPrefix(word);
+        const isWord = inDict === 2 || inDict === 3;
+        const path = findWordPath(word.toUpperCase());
+        if (!isWord) {
+          setFeedback(`"${word.toUpperCase()}" — not in dictionary.`, '#f73b7a');
+          renderBoard();
+        } else if (!path) {
+          setFeedback(`"${word.toUpperCase()}" — valid word but not on this board.`, '#f7a53b');
+          renderBoard();
+        } else {
+          setFeedback(`✓ "${word.toUpperCase()}" found! (${word.length} letters)`, '#3bf7c8');
+          highlightWord(word);
+        }
+        input.value = '';
+      });
+
+      document.getElementById('boggle-input').addEventListener('keydown', e => {
+        if (e.key === 'Enter') document.getElementById('boggle-submit').click();
+      });
+
+      document.getElementById('boggle-input').addEventListener('focus', e => {
+        e.target.style.borderColor = 'var(--accent)';
+      });
+      document.getElementById('boggle-input').addEventListener('blur', e => {
+        e.target.style.borderColor = 'var(--border)';
+      });
+
+      document.getElementById('boggle-solve').addEventListener('click', () => {
+        soundPop(600);
+        const words = findAllWords();
+        foundWords = words;
+        const listEl = document.getElementById('boggle-word-list');
+        const countEl = document.getElementById('boggle-word-count');
+        countEl.textContent = `${words.length} word${words.length !== 1 ? 's' : ''} found`;
+        listEl.innerHTML = '';
+        words.slice(0, 80).forEach(w => {
+          const chip = document.createElement('span');
+          chip.textContent = w.toUpperCase();
+          chip.style.cssText = `font-family:var(--mono); font-size:10px; letter-spacing:1px; padding:4px 8px; border:1px solid var(--border); color:var(--muted); cursor:pointer; transition: all 0.15s;`;
+          chip.addEventListener('mouseenter', () => { chip.style.borderColor = 'var(--accent)'; chip.style.color = 'var(--accent)'; });
+          chip.addEventListener('mouseleave', () => { chip.style.borderColor = 'var(--border)'; chip.style.color = 'var(--muted)'; });
+          chip.addEventListener('click', () => {
+            soundPop(500 + Math.random() * 200);
+            highlightWord(w);
+            setFeedback(`Showing path for "${w.toUpperCase()}"`, 'var(--accent)');
+          });
+          listEl.appendChild(chip);
+        });
+        if (words.length > 80) {
+          const more = document.createElement('span');
+          more.textContent = `+${words.length - 80} more`;
+          more.style.cssText = 'font-family:var(--mono); font-size:10px; color:var(--muted); padding:4px 8px;';
+          listEl.appendChild(more);
+        }
+      });
+
+      document.getElementById('boggle-newboard').addEventListener('click', () => {
+        soundClick();
+        newBoard();
+      });
+
+      newBoard();
     })();
   </script>
 </body>
