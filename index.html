@@ -4,19 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Domenic Maritato — Portfolio</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
   <style>
     :root {
-      --bg: #0d0d0d;
-      --surface: #141414;
-      --border: #222;
-      --accent: #c8f135;
-      --accent2: #3bf7c8;
-      --text: #e8e8e0;
-      --muted: #666;
-      --heading-font: 'Bebas Neue', sans-serif;
-      --mono: 'DM Mono', monospace;
-      --body: 'DM Sans', sans-serif;
+      --bg: #060d1a;
+      --surface: #0b1526;
+      --border: #1a2a3d;
+      --accent: #a8d4ff;
+      --accent2: #c8eeff;
+      --text: #e8f4ff;
+      --muted: #5a7a99;
+      --heading-font: 'Syne', sans-serif;
+      --mono: 'Space Mono', monospace;
+      --body: 'Inter', sans-serif;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -45,7 +45,7 @@
     /* ── SCROLLBAR ── */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
-    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+    ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; opacity: 0.5; }
 
     /* ── LAYOUT ── */
     .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
@@ -65,7 +65,7 @@
       border-bottom-color: var(--border);
     }
     .nav-logo {
-      font-family: var(--heading-font);
+      font-family: var(--heading-font); font-weight: 800;
       font-size: 22px;
       letter-spacing: 2px;
       color: var(--accent);
@@ -95,8 +95,8 @@
     .hero-grid-lines {
       position: absolute; inset: 0;
       background-image:
-        linear-gradient(rgba(200,241,53,0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(200,241,53,0.04) 1px, transparent 1px);
+        linear-gradient(rgba(168,212,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(168,212,255,0.04) 1px, transparent 1px);
       background-size: 60px 60px;
       pointer-events: none;
     }
@@ -119,7 +119,7 @@
     }
 
     .hero-name {
-      font-family: var(--heading-font);
+      font-family: var(--heading-font); font-weight: 800;
       font-size: clamp(60px, 8vw, 130px);
       line-height: 0.9;
       letter-spacing: -1px;
@@ -218,7 +218,7 @@
       width: 0; height: 0;
       border-style: solid;
       border-width: 12px 0 12px 22px;
-      border-color: transparent transparent transparent #c8f135;
+      border-color: transparent transparent transparent #a8d4ff;
       margin-left: 4px;
     }
     .sandbox-label {
@@ -283,7 +283,7 @@
       margin-bottom: 12px;
     }
     .section-title {
-      font-family: var(--heading-font);
+      font-family: var(--heading-font); font-weight: 800;
       font-size: clamp(42px, 7vw, 80px);
       line-height: 0.95;
       letter-spacing: 1px;
@@ -329,7 +329,7 @@
 
     .exp-content {}
     .exp-title {
-      font-family: var(--heading-font);
+      font-family: var(--heading-font); font-weight: 800;
       font-size: 28px;
       letter-spacing: 1px;
       color: var(--text);
@@ -387,7 +387,7 @@
     .project-card:hover::before { transform: scaleX(1); }
 
     .project-number {
-      font-family: var(--heading-font);
+      font-family: var(--heading-font); font-weight: 800;
       font-size: 64px;
       line-height: 1;
       color: var(--border);
@@ -406,7 +406,7 @@
       margin-bottom: 14px;
     }
     .project-name {
-      font-family: var(--heading-font);
+      font-family: var(--heading-font); font-weight: 800;
       font-size: 26px;
       letter-spacing: 1px;
       color: var(--text);
@@ -465,7 +465,7 @@
       gap: 48px;
     }
     .edu-year {
-      font-family: var(--heading-font);
+      font-family: var(--heading-font); font-weight: 800;
       font-size: 80px;
       line-height: 1;
       color: var(--border);
@@ -474,7 +474,7 @@
     }
     .edu-details { padding-top: 8px; }
     .edu-school {
-      font-family: var(--heading-font);
+      font-family: var(--heading-font); font-weight: 800;
       font-size: 36px;
       letter-spacing: 1px;
       color: var(--text);
@@ -493,7 +493,7 @@
       padding: 100px 0 60px;
     }
     .contact-big {
-      font-family: var(--heading-font);
+      font-family: var(--heading-font); font-weight: 800;
       font-size: clamp(50px, 10vw, 130px);
       line-height: 0.9;
       color: var(--text);
@@ -745,37 +745,44 @@
       return audioCtx;
     }
 
-    // Soft hover tick — very short, quiet sine blip
+    // Hover — airy filtered noise sweep
     function soundHover() {
       try {
         const ac = getAudio();
-        const osc = ac.createOscillator();
+        const bufSize = Math.floor(ac.sampleRate * 0.07);
+        const buf = ac.createBuffer(1, bufSize, ac.sampleRate);
+        const data = buf.getChannelData(0);
+        for (let i = 0; i < bufSize; i++) data[i] = (Math.random() * 2 - 1);
+        const src = ac.createBufferSource();
+        src.buffer = buf;
+        const filter = ac.createBiquadFilter();
+        filter.type = 'highpass';
+        filter.frequency.setValueAtTime(3000, ac.currentTime);
+        filter.frequency.exponentialRampToValueAtTime(6000, ac.currentTime + 0.07);
         const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(900, ac.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(600, ac.currentTime + 0.04);
-        gain.gain.setValueAtTime(0.04, ac.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.04);
-        osc.start(ac.currentTime);
-        osc.stop(ac.currentTime + 0.04);
+        gain.gain.setValueAtTime(0.06, ac.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.07);
+        src.connect(filter); filter.connect(gain); gain.connect(ac.destination);
+        src.start(ac.currentTime); src.stop(ac.currentTime + 0.07);
       } catch(e) {}
     }
 
-    // Button click — sharp tick
+    // Click — dual sine thock (two detuned sines = warm UI click)
     function soundClick() {
       try {
         const ac = getAudio();
-        const osc = ac.createOscillator();
-        const gain = ac.createGain();
-        osc.connect(gain); gain.connect(ac.destination);
-        osc.type = 'square';
-        osc.frequency.setValueAtTime(400, ac.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(200, ac.currentTime + 0.06);
-        gain.gain.setValueAtTime(0.12, ac.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.06);
-        osc.start(ac.currentTime);
-        osc.stop(ac.currentTime + 0.06);
+        [320, 480].forEach((freq, i) => {
+          const osc = ac.createOscillator();
+          const gain = ac.createGain();
+          osc.connect(gain); gain.connect(ac.destination);
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, ac.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(freq * 0.5, ac.currentTime + 0.09);
+          gain.gain.setValueAtTime(0.09 - i * 0.02, ac.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.09);
+          osc.start(ac.currentTime);
+          osc.stop(ac.currentTime + 0.09);
+        });
       } catch(e) {}
     }
 
@@ -829,7 +836,7 @@
         filter.frequency.value = 400;
         filter.Q.value = 0.5;
         const gainN = ac.createGain();
-        gainN.gain.setValueAtTime(0.3, ac.currentTime);
+        gainN.gain.setValueAtTime(0.25, ac.currentTime);
         gainN.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.3);
         noise.connect(filter); filter.connect(gainN); gainN.connect(ac.destination);
         noise.start(ac.currentTime); noise.stop(ac.currentTime + 0.3);
@@ -849,14 +856,19 @@
     // Attach hover sound to all interactive elements
     let lastHover = 0;
     function attachHoverSounds() {
-      const targets = document.querySelectorAll('a, button, .btn, .sb-btn, .project-card, .skill-chip, #sandbox-intro');
-      targets.forEach(el => {
+      // Hover on anything interactive
+      const hoverTargets = document.querySelectorAll('a, button, .btn, .sb-btn, .project-card, .skill-chip, #sandbox-intro');
+      hoverTargets.forEach(el => {
         el.addEventListener('mouseenter', () => {
           const now = Date.now();
-          if (now - lastHover < 60) return; // throttle
+          if (now - lastHover < 80) return;
           lastHover = now;
           soundHover();
         });
+      });
+      // Click sound ONLY on real action buttons/links (not decorative cards/chips)
+      const clickTargets = document.querySelectorAll('a.btn, button.sb-btn, #sandbox-intro, nav a');
+      clickTargets.forEach(el => {
         el.addEventListener('click', () => soundClick());
       });
     }
@@ -887,8 +899,8 @@
     let gravityDir = 1;
     let animId;
 
-    const ACCENT = '#c8f135';
-    const ACCENT2 = '#3bf7c8';
+    const ACCENT = '#a8d4ff';
+    const ACCENT2 = '#c8eeff';
     const COLORS = ['#c8f135','#3bf7c8','#f7a53b','#f73b7a','#a53bf7','#ffffff'];
 
     function resize() {
@@ -1043,6 +1055,7 @@
         if (b.glow) {
           ctx.shadowBlur = 18;
           ctx.shadowColor = b.color;
+          ctx.shadowBlur = 16;
         }
         ctx.beginPath();
         ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
