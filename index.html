@@ -32,7 +32,6 @@
       overflow-x: hidden;
     }
 
-    /* ── NOISE OVERLAY ── */
     body::before {
       content: '';
       position: fixed; inset: 0;
@@ -42,15 +41,12 @@
       z-index: 9999;
     }
 
-    /* ── SCROLLBAR ── */
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; opacity: 0.5; }
 
-    /* ── LAYOUT ── */
     .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
 
-    /* ── NAV ── */
     nav {
       position: fixed; top: 0; left: 0; right: 0;
       z-index: 100;
@@ -83,11 +79,10 @@
     }
     .nav-links a:hover { color: var(--accent); }
 
-    /* ── HERO ── */
     #hero {
       min-height: 100vh;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      align-items: center;
       position: relative;
       overflow: hidden;
     }
@@ -103,8 +98,9 @@
 
     .hero-left {
       display: flex; flex-direction: column; justify-content: flex-end;
-      padding: 0 48px 80px 32px;
+      padding: 120px 48px 80px 32px;
       position: relative; z-index: 2;
+      max-width: 680px;
     }
 
     .hero-tag {
@@ -176,102 +172,6 @@
       background: linear-gradient(to bottom, transparent, var(--muted));
     }
 
-    /* ── PHYSICS SANDBOX ── */
-    .hero-right {
-      position: relative;
-      border-left: 1px solid var(--border);
-      overflow: hidden;
-    }
-
-    #sandbox-canvas {
-      position: absolute; inset: 0;
-      width: 100%; height: 100%;
-      display: block;
-    }
-
-    #sandbox-intro {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      background: rgba(13,13,13,0.85);
-      backdrop-filter: blur(4px);
-      cursor: pointer;
-      transition: opacity 0.6s;
-      z-index: 10;
-    }
-    #sandbox-intro.hidden { opacity: 0; pointer-events: none; }
-
-    .sandbox-play-btn {
-      width: 72px; height: 72px;
-      border: 2px solid var(--accent);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      margin-bottom: 20px;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    #sandbox-intro:hover .sandbox-play-btn {
-      transform: scale(1.1);
-      box-shadow: 0 0 40px rgba(200,241,53,0.3);
-    }
-    .sandbox-play-btn::after {
-      content: '';
-      width: 0; height: 0;
-      border-style: solid;
-      border-width: 12px 0 12px 22px;
-      border-color: transparent transparent transparent #a8d4ff;
-      margin-left: 4px;
-    }
-    .sandbox-label {
-      font-family: var(--mono);
-      font-size: 11px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-    .sandbox-sublabel {
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--border);
-    }
-
-    #sandbox-ui {
-      position: absolute; top: 16px; right: 16px;
-      display: flex; flex-direction: column; gap: 8px;
-      z-index: 5; opacity: 0; transition: opacity 0.5s;
-    }
-    #sandbox-ui.visible { opacity: 1; }
-    .sb-btn {
-      font-family: var(--mono); font-size: 10px;
-      letter-spacing: 1px; text-transform: uppercase;
-      padding: 7px 12px;
-      border: 1px solid var(--border);
-      background: rgba(13,13,13,0.8);
-      color: var(--muted);
-      cursor: pointer;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .sb-btn:hover { border-color: var(--accent); color: var(--accent); }
-    .sb-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(200,241,53,0.08); }
-
-    #sandbox-mode-label {
-      position: absolute; bottom: 16px; left: 16px;
-      font-family: var(--mono); font-size: 10px;
-      letter-spacing: 2px; text-transform: uppercase;
-      color: var(--muted); z-index: 5;
-      opacity: 0; transition: opacity 0.5s;
-    }
-    #sandbox-mode-label.visible { opacity: 1; }
-
-    @media (max-width: 720px) {
-      #hero { grid-template-columns: 1fr; }
-      .hero-right { display: none; }
-      .hero-left { padding: 120px 32px 80px; }
-    }
-
-    /* ── SECTION BASICS ── */
     section { padding: 100px 0; }
 
     .section-label {
@@ -291,14 +191,6 @@
       margin-bottom: 60px;
     }
 
-    /* ── DIVIDER ── */
-    .divider {
-      width: 100%; height: 1px;
-      background: linear-gradient(to right, var(--accent), transparent 60%);
-      margin-bottom: 60px;
-    }
-
-    /* ── EXPERIENCE ── */
     #experience { border-top: 1px solid var(--border); }
 
     .exp-item {
@@ -327,7 +219,6 @@
       font-weight: 300;
     }
 
-    .exp-content {}
     .exp-title {
       font-family: var(--heading-font); font-weight: 800;
       font-size: 28px;
@@ -351,75 +242,8 @@
       font-size: 12px;
     }
 
-    /* ── PROJECTS ── */
     #projects { border-top: 1px solid var(--border); }
 
-    .projects-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 2px;
-    }
-
-    .project-card {
-      background: var(--surface);
-      padding: 36px 32px;
-      border: 1px solid var(--border);
-      position: relative;
-      overflow: hidden;
-      transition: border-color 0.2s, transform 0.3s;
-      cursor: default;
-      opacity: 0;
-      transform: translateY(20px);
-      transition: opacity 0.5s, transform 0.5s, border-color 0.2s;
-    }
-    .project-card.visible { opacity: 1; transform: none; }
-    .project-card:hover { border-color: var(--accent); }
-
-    .project-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(to right, var(--accent), var(--accent2));
-      transform: scaleX(0);
-      transform-origin: left;
-      transition: transform 0.3s;
-    }
-    .project-card:hover::before { transform: scaleX(1); }
-
-    .project-number {
-      font-family: var(--heading-font); font-weight: 800;
-      font-size: 64px;
-      line-height: 1;
-      color: var(--border);
-      position: absolute; top: 16px; right: 24px;
-      pointer-events: none;
-      transition: color 0.2s;
-    }
-    .project-card:hover .project-number { color: rgba(200,241,53,0.08); }
-
-    .project-tag {
-      font-family: var(--mono);
-      font-size: 10px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: var(--accent2);
-      margin-bottom: 14px;
-    }
-    .project-name {
-      font-family: var(--heading-font); font-weight: 800;
-      font-size: 26px;
-      letter-spacing: 1px;
-      color: var(--text);
-      margin-bottom: 12px;
-      line-height: 1.1;
-    }
-    .project-desc {
-      font-size: 13px;
-      color: var(--muted);
-      line-height: 1.7;
-    }
-
-    /* ── DEMO PROJECTS ── */
     .demo-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -429,13 +253,12 @@
       background: var(--surface);
       border: 1px solid var(--border);
       overflow: hidden;
-      opacity: 0; transform: translateY(20px);
+      opacity: 0;
+      transform: translateY(20px);
       transition: opacity 0.5s, transform 0.5s;
     }
     .demo-card.visible { opacity: 1; transform: none; }
-    .demo-card-wide {
-      grid-column: 1 / -1;
-    }
+    .demo-card-wide { grid-column: 1 / -1; }
     .demo-card-header {
       padding: 24px 28px 20px;
       display: flex; justify-content: space-between; align-items: flex-start;
@@ -530,7 +353,6 @@
       margin-top: 4px; text-align: right;
     }
 
-    /* ── SKILLS ── */
     #skills { border-top: 1px solid var(--border); }
 
     .skills-layout {
@@ -567,8 +389,6 @@
       background: rgba(200,241,53,0.05);
     }
 
-
-    /* ── EDUCATION ── */
     #education { border-top: 1px solid var(--border); }
 
     .edu-block {
@@ -598,7 +418,6 @@
       letter-spacing: 1px;
     }
 
-    /* ── CONTACT / FOOTER ── */
     #contact {
       border-top: 1px solid var(--border);
       padding: 100px 0 60px;
@@ -632,25 +451,23 @@
     }
     footer span { color: var(--accent); }
 
-    /* ── ANIMATIONS ── */
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(24px); }
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 720px) {
       .exp-item { grid-template-columns: 1fr; gap: 16px; }
       .skills-layout { grid-template-columns: 1fr; gap: 48px; }
       .edu-block { flex-direction: column; gap: 16px; }
       .edu-year { font-size: 48px; }
       nav .nav-links { display: none; }
+      .demo-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <!-- NAV -->
   <nav id="nav">
     <a href="#hero" class="nav-logo">DM</a>
     <ul class="nav-links">
@@ -661,11 +478,8 @@
     </ul>
   </nav>
 
-  <!-- HERO -->
   <section id="hero">
     <div class="hero-grid-lines"></div>
-
-    <!-- LEFT -->
     <div class="hero-left">
       <div class="hero-tag">Computer Science Student · Pittsburgh, PA</div>
       <h1 class="hero-name">DOMENIC<br/><span>MARITATO</span></h1>
@@ -679,26 +493,8 @@
       </div>
       <div class="hero-scroll-hint">Scroll</div>
     </div>
-
-    <!-- RIGHT: Physics sandbox -->
-    <div class="hero-right">
-      <canvas id="sandbox-canvas"></canvas>
-      <div id="sandbox-intro">
-        <div class="sandbox-play-btn"></div>
-        <div class="sandbox-label">Physics Sandbox</div>
-        <div class="sandbox-sublabel">Click to play</div>
-      </div>
-      <div id="sandbox-ui">
-        <button class="sb-btn active" id="btn-balls">● Balls</button>
-        <button class="sb-btn" id="btn-explode">✦ Explode</button>
-        <button class="sb-btn" id="btn-gravity">↓ Gravity</button>
-        <button class="sb-btn" id="btn-clear">✕ Clear</button>
-      </div>
-      <div id="sandbox-mode-label">Click to spawn</div>
-    </div>
   </section>
 
-  <!-- EXPERIENCE -->
   <section id="experience">
     <div class="container">
       <div class="section-label">01 — Experience</div>
@@ -735,16 +531,13 @@
     </div>
   </section>
 
-  <!-- PROJECTS -->
   <section id="projects">
     <div class="container">
       <div class="section-label">02 — Projects</div>
       <h2 class="section-title">BUILDS</h2>
 
-      <!-- DEMO GRID -->
       <div class="demo-grid">
 
-        <!-- 1: Physics Sandbox -->
         <div class="demo-card">
           <div class="demo-card-header">
             <div>
@@ -759,7 +552,7 @@
               <div class="demo-play-btn"></div>
               <span class="demo-play-label">Click to play</span>
             </div>
-            <div class="demo-controls" id="proj-sandbox-ui">
+            <div class="demo-controls" id="proj-sandbox-ui" style="display:none;">
               <button class="dc-btn active" id="ps-balls">● Balls</button>
               <button class="dc-btn" id="ps-explode">✦ Explode</button>
               <button class="dc-btn" id="ps-gravity">↓ Gravity</button>
@@ -768,7 +561,6 @@
           </div>
         </div>
 
-        <!-- 2: Breakout -->
         <div class="demo-card">
           <div class="demo-card-header">
             <div>
@@ -790,7 +582,6 @@
           </div>
         </div>
 
-        <!-- 3: PittGuard Graph -->
         <div class="demo-card demo-card-wide">
           <div class="demo-card-header">
             <div>
@@ -814,7 +605,6 @@
     </div>
   </section>
 
-  <!-- SKILLS -->
   <section id="skills">
     <div class="container">
       <div class="section-label">03 — Skills</div>
@@ -823,11 +613,11 @@
         <div>
           <div class="skills-group-label">Languages</div>
           <div class="skill-list">
-            <span class="skill-chip primary">HTML / CSS / JS</span>
-            <span class="skill-chip primary">Python</span>
-            <span class="skill-chip primary">Java</span>
-            <span class="skill-chip primary">C</span>
-            <span class="skill-chip primary">C#</span>
+            <span class="skill-chip">HTML / CSS / JS</span>
+            <span class="skill-chip">Python</span>
+            <span class="skill-chip">Java</span>
+            <span class="skill-chip">C</span>
+            <span class="skill-chip">C#</span>
             <span class="skill-chip">SQL</span>
             <span class="skill-chip">MIPS Assembly</span>
           </div>
@@ -835,8 +625,8 @@
         <div>
           <div class="skills-group-label">Tools & Platforms</div>
           <div class="skill-list">
-            <span class="skill-chip primary">Git</span>
-            <span class="skill-chip primary">Unity</span>
+            <span class="skill-chip">Git</span>
+            <span class="skill-chip">Unity</span>
             <span class="skill-chip">VS Code</span>
             <span class="skill-chip">Jupyter Lab</span>
             <span class="skill-chip">Git Bash / CLI</span>
@@ -846,7 +636,6 @@
     </div>
   </section>
 
-  <!-- EDUCATION -->
   <section id="education">
     <div class="container">
       <div class="section-label">04 — Education</div>
@@ -861,7 +650,6 @@
     </div>
   </section>
 
-  <!-- CONTACT -->
   <section id="contact">
     <div class="container">
       <div class="section-label">05 — Contact</div>
@@ -880,14 +668,11 @@
   </footer>
 
   <script>
-    // ── Nav scroll ──
     const nav = document.getElementById('nav');
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 60);
     });
 
-
-    // ── Audio Engine ──
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     let audioCtx = null;
 
@@ -896,7 +681,6 @@
       return audioCtx;
     }
 
-    // Hover — barely-there high sine ping
     function soundHover() {
       try {
         const ac = getAudio();
@@ -912,7 +696,6 @@
       } catch(e) {}
     }
 
-    // Click — dual sine thock (two detuned sines = warm UI click)
     function soundClick() {
       try {
         const ac = getAudio();
@@ -931,7 +714,6 @@
       } catch(e) {}
     }
 
-    // Ball spawn pop — quick high blip
     function soundPop(pitch = 600) {
       try {
         const ac = getAudio();
@@ -948,7 +730,6 @@
       } catch(e) {}
     }
 
-    // Ball bounce — low thud
     function soundBounce() {
       try {
         const ac = getAudio();
@@ -965,11 +746,9 @@
       } catch(e) {}
     }
 
-    // Explosion — noise burst + sub thud
     function soundExplode() {
       try {
         const ac = getAudio();
-        // noise burst
         const bufSize = ac.sampleRate * 0.3;
         const buf = ac.createBuffer(1, bufSize, ac.sampleRate);
         const data = buf.getChannelData(0);
@@ -985,7 +764,6 @@
         gainN.gain.exponentialRampToValueAtTime(0.0001, ac.currentTime + 0.3);
         noise.connect(filter); filter.connect(gainN); gainN.connect(ac.destination);
         noise.start(ac.currentTime); noise.stop(ac.currentTime + 0.3);
-        // sub thud
         const sub = ac.createOscillator();
         const gainS = ac.createGain();
         sub.connect(gainS); gainS.connect(ac.destination);
@@ -998,11 +776,9 @@
       } catch(e) {}
     }
 
-    // Attach hover sound to all interactive elements
     let lastHover = 0;
     function attachHoverSounds() {
-      // Hover on anything interactive
-      const hoverTargets = document.querySelectorAll('a, button, .btn, .sb-btn, .project-card, .skill-chip, #sandbox-intro');
+      const hoverTargets = document.querySelectorAll('a, button, .btn, .dc-btn, .skill-chip, .demo-overlay');
       hoverTargets.forEach(el => {
         el.addEventListener('mouseenter', () => {
           const now = Date.now();
@@ -1011,15 +787,13 @@
           soundHover();
         });
       });
-      // Click sound ONLY on real action buttons/links (not decorative cards/chips)
-      const clickTargets = document.querySelectorAll('a.btn, button.sb-btn, #sandbox-intro, nav a');
+      const clickTargets = document.querySelectorAll('a.btn, button.dc-btn, .demo-overlay, nav a');
       clickTargets.forEach(el => {
         el.addEventListener('click', () => soundClick());
       });
     }
     attachHoverSounds();
 
-    // ── Intersection observer ──
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((e) => {
         if (e.isIntersecting) {
@@ -1028,197 +802,479 @@
         }
       });
     }, { threshold: 0.1 });
+
     document.querySelectorAll('.exp-item').forEach((el, i) => { el.dataset.delay = i * 120; observer.observe(el); });
-    document.querySelectorAll('.project-card').forEach((el, i) => { el.dataset.delay = i * 100; observer.observe(el); });
+    document.querySelectorAll('.demo-card').forEach((el, i) => { el.dataset.delay = i * 100; observer.observe(el); });
 
-    // ── Physics Sandbox ──
-    const canvas = document.getElementById('sandbox-canvas');
-    const ctx = canvas.getContext('2d');
-    const intro = document.getElementById('sandbox-intro');
-    const sandboxUI = document.getElementById('sandbox-ui');
-    const modeLabel = document.getElementById('sandbox-mode-label');
+    (function initPhysicsSandbox() {
+      const canvas = document.getElementById('proj-sandbox-canvas');
+      const ctx = canvas.getContext('2d');
+      const intro = document.getElementById('proj-sandbox-intro');
+      const ui = document.getElementById('proj-sandbox-ui');
 
-    let balls = [];
-    let running = false;
-    let mode = 'balls';
-    let gravityDir = 1;
-    let animId;
+      let balls = [];
+      let running = false;
+      let mode = 'balls';
+      let gravityDir = 1;
 
-    const ACCENT = '#a8d4ff';
-    const ACCENT2 = '#c8eeff';
-    const COLORS = ['#c8f135','#3bf7c8','#f7a53b','#f73b7a','#a53bf7','#ffffff'];
+      const COLORS = ['#c8f135','#3bf7c8','#f7a53b','#f73b7a','#a53bf7','#ffffff'];
 
-    function resize() {
-      const rect = canvas.parentElement.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = rect.height;
-    }
-    resize();
-    window.addEventListener('resize', resize);
-
-    // Launch sandbox
-    intro.addEventListener('click', () => {
-      intro.classList.add('hidden');
-      sandboxUI.classList.add('visible');
-      modeLabel.classList.add('visible');
-      running = true;
-      spawnBurst(canvas.width / 2, canvas.height / 2, 18);
-      loop();
-    });
-
-    // Spawn on canvas click
-    canvas.addEventListener('click', (e) => {
-      if (!running) return;
-      const rect = canvas.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      if (mode === 'balls') spawnBurst(x, y, 6);
-      else if (mode === 'explode') explode(x, y);
-    });
-
-    // Buttons
-    document.getElementById('btn-balls').addEventListener('click', () => setMode('balls', 'Click to spawn balls'));
-    document.getElementById('btn-explode').addEventListener('click', () => setMode('explode', 'Click to explode'));
-    document.getElementById('btn-gravity').addEventListener('click', toggleGravity);
-    document.getElementById('btn-clear').addEventListener('click', () => { balls = []; });
-
-    function setMode(m, label) {
-      mode = m;
-      modeLabel.textContent = label;
-      document.querySelectorAll('.sb-btn').forEach(b => b.classList.remove('active'));
-      if (m === 'balls') document.getElementById('btn-balls').classList.add('active');
-      if (m === 'explode') document.getElementById('btn-explode').classList.add('active');
-    }
-
-    function toggleGravity() {
-      gravityDir *= -1;
-      const btn = document.getElementById('btn-gravity');
-      btn.textContent = gravityDir > 0 ? '↓ Gravity' : '↑ Gravity';
-      btn.classList.toggle('active');
-    }
-
-    function spawnBurst(cx, cy, count) {
-      soundPop(400 + Math.random() * 400);
-      for (let i = 0; i < count; i++) {
-        const angle = (Math.PI * 2 / count) * i + Math.random() * 0.5;
-        const speed = 3 + Math.random() * 5;
-        const r = 4 + Math.random() * 10;
-        balls.push({
-          x: cx, y: cy,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed - 2,
-          r,
-          color: COLORS[Math.floor(Math.random() * COLORS.length)],
-          trail: [],
-          life: 1,
-          glow: Math.random() > 0.5
-        });
+      function resize() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
       }
-    }
+      resize();
+      window.addEventListener('resize', resize);
 
-    function explode(cx, cy) {
-      soundExplode();
-      // Push nearby balls away
-      balls.forEach(b => {
-        const dx = b.x - cx, dy = b.y - cy;
-        const dist = Math.sqrt(dx*dx + dy*dy) || 1;
-        if (dist < 200) {
-          const force = (200 - dist) / 200 * 20;
-          b.vx += (dx / dist) * force;
-          b.vy += (dy / dist) * force;
-        }
+      intro.addEventListener('click', () => {
+        intro.classList.add('hidden');
+        ui.style.display = 'flex';
+        running = true;
+        spawnBurst(canvas.width / 2, canvas.height / 2, 18);
+        loop();
       });
-      // Spawn ring of particles
-      for (let i = 0; i < 24; i++) {
-        const angle = (Math.PI * 2 / 24) * i;
-        const speed = 8 + Math.random() * 8;
-        balls.push({
-          x: cx, y: cy,
-          vx: Math.cos(angle) * speed,
-          vy: Math.sin(angle) * speed,
-          r: 2 + Math.random() * 4,
-          color: Math.random() > 0.5 ? ACCENT : ACCENT2,
-          trail: [], life: 1, glow: true
-        });
+
+      canvas.addEventListener('click', (e) => {
+        if (!running) return;
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        if (mode === 'balls') spawnBurst(x, y, 6);
+        else if (mode === 'explode') explode(x, y);
+      });
+
+      document.getElementById('ps-balls').addEventListener('click', () => setMode('balls'));
+      document.getElementById('ps-explode').addEventListener('click', () => setMode('explode'));
+      document.getElementById('ps-gravity').addEventListener('click', () => {
+        gravityDir *= -1;
+        const btn = document.getElementById('ps-gravity');
+        btn.textContent = gravityDir > 0 ? '↓ Gravity' : '↑ Gravity';
+        btn.classList.toggle('active');
+      });
+      document.getElementById('ps-clear').addEventListener('click', () => { balls = []; });
+
+      function setMode(m) {
+        mode = m;
+        document.querySelectorAll('#proj-sandbox-ui .dc-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(m === 'balls' ? 'ps-balls' : 'ps-explode').classList.add('active');
       }
-    }
 
-    function loop() {
-      animId = requestAnimationFrame(loop);
-      const W = canvas.width, H = canvas.height;
-
-      // Fade trail
-      ctx.fillStyle = 'rgba(13,13,13,0.18)';
-      ctx.fillRect(0, 0, W, H);
-
-      const gravity = 0.25 * gravityDir;
-      const friction = 0.985;
-      const floor = gravityDir > 0 ? H : 0;
-      const ceiling = gravityDir > 0 ? 0 : H;
-
-      for (let i = balls.length - 1; i >= 0; i--) {
-        const b = balls[i];
-        b.vy += gravity;
-        b.vx *= friction;
-        b.vy *= friction;
-        b.x += b.vx;
-        b.y += b.vy;
-
-        // Walls
-        if (b.x - b.r < 0) { b.x = b.r; b.vx *= -0.7; if(Math.abs(b.vx)>1) tryBounceSound(); }
-        if (b.x + b.r > W) { b.x = W - b.r; b.vx *= -0.7; if(Math.abs(b.vx)>1) tryBounceSound(); }
-
-        // Floor/ceiling bounce
-        if (gravityDir > 0 && b.y + b.r > H) {
-          b.y = H - b.r; b.vy *= -0.6;
-          if (Math.abs(b.vy) > 1) tryBounceSound();
-          if (Math.abs(b.vx) < 0.1) b.vx = 0;
+      function spawnBurst(cx, cy, count) {
+        soundPop(400 + Math.random() * 400);
+        for (let i = 0; i < count; i++) {
+          const angle = (Math.PI * 2 / count) * i + Math.random() * 0.5;
+          const speed = 3 + Math.random() * 5;
+          const r = 4 + Math.random() * 10;
+          balls.push({
+            x: cx, y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed - 2,
+            r,
+            color: COLORS[Math.floor(Math.random() * COLORS.length)],
+            trail: [], life: 1, glow: Math.random() > 0.5
+          });
         }
-        if (gravityDir < 0 && b.y - b.r < 0) {
-          b.y = b.r; b.vy *= -0.6;
-          if (Math.abs(b.vy) > 1) tryBounceSound();
+      }
+
+      function explode(cx, cy) {
+        soundExplode();
+        balls.forEach(b => {
+          const dx = b.x - cx, dy = b.y - cy;
+          const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+          if (dist < 200) {
+            const force = (200 - dist) / 200 * 20;
+            b.vx += (dx / dist) * force;
+            b.vy += (dy / dist) * force;
+          }
+        });
+        for (let i = 0; i < 24; i++) {
+          const angle = (Math.PI * 2 / 24) * i;
+          const speed = 8 + Math.random() * 8;
+          balls.push({
+            x: cx, y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            r: 2 + Math.random() * 4,
+            color: Math.random() > 0.5 ? '#a8d4ff' : '#c8eeff',
+            trail: [], life: 1, glow: true
+          });
         }
+      }
 
-        // Trail
-        b.trail.push({ x: b.x, y: b.y });
-        if (b.trail.length > 12) b.trail.shift();
+      let lastBounce = 0;
+      function tryBounceSound() {
+        const now = Date.now();
+        if (now - lastBounce > 80) { soundBounce(); lastBounce = now; }
+      }
 
-        // Draw trail
-        for (let t = 0; t < b.trail.length - 1; t++) {
-          const alpha = (t / b.trail.length) * 0.3;
+      function loop() {
+        requestAnimationFrame(loop);
+        const W = canvas.width, H = canvas.height;
+        ctx.fillStyle = 'rgba(13,13,13,0.18)';
+        ctx.fillRect(0, 0, W, H);
+        const gravity = 0.25 * gravityDir;
+
+        for (let i = balls.length - 1; i >= 0; i--) {
+          const b = balls[i];
+          b.vy += gravity;
+          b.vx *= 0.985;
+          b.vy *= 0.985;
+          b.x += b.vx;
+          b.y += b.vy;
+
+          if (b.x - b.r < 0) { b.x = b.r; b.vx *= -0.7; if(Math.abs(b.vx)>1) tryBounceSound(); }
+          if (b.x + b.r > W) { b.x = W - b.r; b.vx *= -0.7; if(Math.abs(b.vx)>1) tryBounceSound(); }
+          if (gravityDir > 0 && b.y + b.r > H) {
+            b.y = H - b.r; b.vy *= -0.6;
+            if (Math.abs(b.vy) > 1) tryBounceSound();
+            if (Math.abs(b.vx) < 0.1) b.vx = 0;
+          }
+          if (gravityDir < 0 && b.y - b.r < 0) {
+            b.y = b.r; b.vy *= -0.6;
+            if (Math.abs(b.vy) > 1) tryBounceSound();
+          }
+
+          b.trail.push({ x: b.x, y: b.y });
+          if (b.trail.length > 12) b.trail.shift();
+
+          for (let t = 0; t < b.trail.length - 1; t++) {
+            const alpha = (t / b.trail.length) * 0.3;
+            ctx.beginPath();
+            ctx.moveTo(b.trail[t].x, b.trail[t].y);
+            ctx.lineTo(b.trail[t+1].x, b.trail[t+1].y);
+            ctx.globalAlpha = alpha;
+            ctx.strokeStyle = b.color;
+            ctx.lineWidth = b.r * 0.6;
+            ctx.stroke();
+            ctx.globalAlpha = 1;
+          }
+
+          if (b.glow) { ctx.shadowBlur = 18; ctx.shadowColor = b.color; }
           ctx.beginPath();
-          ctx.moveTo(b.trail[t].x, b.trail[t].y);
-          ctx.lineTo(b.trail[t+1].x, b.trail[t+1].y);
-          ctx.strokeStyle = b.color.replace(')', `,${alpha})`).replace('rgb', 'rgba').replace('#', '');
-          ctx.lineWidth = b.r * 0.6;
-          ctx.globalAlpha = alpha;
-          ctx.stroke();
-          ctx.globalAlpha = 1;
+          ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+          ctx.fillStyle = b.color;
+          ctx.fill();
+          ctx.shadowBlur = 0;
         }
 
-        // Draw ball
-        if (b.glow) {
-          ctx.shadowBlur = 18;
-          ctx.shadowColor = b.color;
-          ctx.shadowBlur = 16;
+        if (balls.length > 300) balls.splice(0, balls.length - 300);
+      }
+    })();
+
+    (function initBreakout() {
+      const canvas = document.getElementById('breakout-canvas');
+      const ctx = canvas.getContext('2d');
+      const intro = document.getElementById('breakout-intro');
+      const hud = document.getElementById('breakout-hud');
+
+      let running = false;
+      let score = 0, lives = 3;
+      let paddle, ball, bricks;
+      let keys = {};
+      let gameOver = false;
+
+      function resize() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+      }
+      resize();
+      window.addEventListener('resize', () => { resize(); if (running) init(); });
+
+      intro.addEventListener('click', () => {
+        intro.classList.add('hidden');
+        hud.style.display = 'flex';
+        running = true;
+        init();
+        loop();
+      });
+
+      window.addEventListener('keydown', e => { keys[e.key] = true; });
+      window.addEventListener('keyup', e => { keys[e.key] = false; });
+
+      canvas.addEventListener('mousemove', e => {
+        if (!running || !paddle) return;
+        const rect = canvas.getBoundingClientRect();
+        paddle.x = Math.max(0, Math.min(canvas.width - paddle.w, e.clientX - rect.left - paddle.w / 2));
+      });
+
+      function init() {
+        const W = canvas.width, H = canvas.height;
+        score = 0; lives = 3; gameOver = false;
+        document.getElementById('bo-score').textContent = 'Score: 0';
+        document.getElementById('bo-lives').textContent = 'Lives: 3';
+
+        paddle = { x: W / 2 - 50, y: H - 30, w: 80, h: 10 };
+        ball = { x: W / 2, y: H - 50, vx: 3, vy: -4, r: 7 };
+
+        const cols = 8, rows = 4;
+        const bw = (W - 40) / cols, bh = 22;
+        bricks = [];
+        const colors = ['#f73b7a','#f7a53b','#c8f135','#3bf7c8'];
+        for (let r = 0; r < rows; r++) {
+          for (let c = 0; c < cols; c++) {
+            bricks.push({ x: 20 + c * bw, y: 50 + r * (bh + 6), w: bw - 4, h: bh, alive: true, color: colors[r] });
+          }
         }
+      }
+
+      function loop() {
+        requestAnimationFrame(loop);
+        if (!running) return;
+        const W = canvas.width, H = canvas.height;
+
+        ctx.clearRect(0, 0, W, H);
+        ctx.fillStyle = '#060d1a';
+        ctx.fillRect(0, 0, W, H);
+
+        if (gameOver) {
+          ctx.fillStyle = '#a8d4ff';
+          ctx.font = 'bold 28px Rajdhani, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(score > 0 && bricks.every(b => !b.alive) ? 'YOU WIN' : 'GAME OVER', W / 2, H / 2 - 10);
+          ctx.font = '13px Space Mono, monospace';
+          ctx.fillStyle = '#5a7a99';
+          ctx.fillText('click to restart', W / 2, H / 2 + 20);
+          ctx.textAlign = 'left';
+          return;
+        }
+
+        if (keys['ArrowLeft']) paddle.x = Math.max(0, paddle.x - 6);
+        if (keys['ArrowRight']) paddle.x = Math.min(W - paddle.w, paddle.x + 6);
+
+        ball.x += ball.vx;
+        ball.y += ball.vy;
+
+        if (ball.x - ball.r < 0) { ball.x = ball.r; ball.vx *= -1; }
+        if (ball.x + ball.r > W) { ball.x = W - ball.r; ball.vx *= -1; }
+        if (ball.y - ball.r < 0) { ball.y = ball.r; ball.vy *= -1; }
+
+        if (
+          ball.y + ball.r > paddle.y &&
+          ball.y + ball.r < paddle.y + paddle.h + Math.abs(ball.vy) &&
+          ball.x > paddle.x && ball.x < paddle.x + paddle.w
+        ) {
+          ball.vy = -Math.abs(ball.vy);
+          const hit = (ball.x - (paddle.x + paddle.w / 2)) / (paddle.w / 2);
+          ball.vx = hit * 5;
+          soundBounce();
+        }
+
+        if (ball.y - ball.r > H) {
+          lives--;
+          document.getElementById('bo-lives').textContent = 'Lives: ' + lives;
+          if (lives <= 0) { gameOver = true; return; }
+          ball.x = W / 2; ball.y = H - 50;
+          ball.vx = 3; ball.vy = -4;
+        }
+
+        for (const b of bricks) {
+          if (!b.alive) continue;
+          if (ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w &&
+              ball.y + ball.r > b.y && ball.y - ball.r < b.y + b.h) {
+            b.alive = false;
+            ball.vy *= -1;
+            score += 10;
+            document.getElementById('bo-score').textContent = 'Score: ' + score;
+            soundPop(500 + Math.random() * 300);
+          }
+        }
+
+        if (bricks.every(b => !b.alive)) { gameOver = true; return; }
+
+        for (const b of bricks) {
+          if (!b.alive) continue;
+          ctx.fillStyle = b.color;
+          ctx.shadowBlur = 8; ctx.shadowColor = b.color;
+          ctx.fillRect(b.x, b.y, b.w, b.h);
+          ctx.shadowBlur = 0;
+        }
+
+        ctx.fillStyle = '#a8d4ff';
+        ctx.shadowBlur = 12; ctx.shadowColor = '#a8d4ff';
+        ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
+        ctx.shadowBlur = 0;
+
         ctx.beginPath();
-        ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-        ctx.fillStyle = b.color;
+        ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
+        ctx.shadowBlur = 14; ctx.shadowColor = '#ffffff';
         ctx.fill();
         ctx.shadowBlur = 0;
       }
 
-      // Cap ball count
-      if (balls.length > 300) balls.splice(0, balls.length - 300);
-    }
+      canvas.addEventListener('click', () => {
+        if (gameOver) { init(); }
+      });
+    })();
 
-    // ── Bounce sound throttle ──
-    let lastBounce = 0;
-    function tryBounceSound() {
-      const now = Date.now();
-      if (now - lastBounce > 80) { soundBounce(); lastBounce = now; }
-    }
+    (function initPittguard() {
+      const canvas = document.getElementById('pittguard-canvas');
+      const ctx = canvas.getContext('2d');
+
+      let mode = 'infect';
+      let nodes = [];
+      let edges = [];
+      let animQueue = [];
+      let animating = false;
+
+      function resize() {
+        const rect = canvas.parentElement.getBoundingClientRect();
+        canvas.width = rect.width;
+        canvas.height = rect.height;
+        buildGraph();
+        draw();
+      }
+      resize();
+      window.addEventListener('resize', resize);
+
+      function buildGraph() {
+        const W = canvas.width, H = canvas.height;
+        const count = Math.floor(W / 60);
+        nodes = [];
+        for (let i = 0; i < count; i++) {
+          nodes.push({
+            x: 40 + Math.random() * (W - 80),
+            y: 40 + Math.random() * (H - 80),
+            state: 'neutral',
+            id: i
+          });
+        }
+        edges = [];
+        for (let i = 0; i < nodes.length; i++) {
+          for (let j = i + 1; j < nodes.length; j++) {
+            const dx = nodes[i].x - nodes[j].x;
+            const dy = nodes[i].y - nodes[j].y;
+            const d = Math.sqrt(dx*dx + dy*dy);
+            if (d < 160) edges.push([i, j]);
+          }
+        }
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = '#060d1a';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        for (const [a, b] of edges) {
+          ctx.beginPath();
+          ctx.moveTo(nodes[a].x, nodes[a].y);
+          ctx.lineTo(nodes[b].x, nodes[b].y);
+          ctx.strokeStyle = '#1a2a3d';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+
+        for (const n of nodes) {
+          const color = n.state === 'infected' ? '#f73b7a' : n.state === 'secure' ? '#3bf7c8' : '#5a7a99';
+          ctx.beginPath();
+          ctx.arc(n.x, n.y, 10, 0, Math.PI * 2);
+          ctx.fillStyle = color;
+          ctx.shadowBlur = n.state !== 'neutral' ? 16 : 4;
+          ctx.shadowColor = color;
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+      }
+
+      function bfsInfect(startId) {
+        const visited = new Set([startId]);
+        const queue = [startId];
+        const order = [];
+        nodes[startId].state = 'infected';
+        while (queue.length) {
+          const cur = queue.shift();
+          for (const [a, b] of edges) {
+            const neighbor = a === cur ? b : b === cur ? a : -1;
+            if (neighbor >= 0 && !visited.has(neighbor)) {
+              visited.add(neighbor);
+              queue.push(neighbor);
+              order.push(neighbor);
+            }
+          }
+        }
+        animQueue = order;
+        runAnim('infected');
+      }
+
+      function dijkstraPatch(startId) {
+        const dist = new Array(nodes.length).fill(Infinity);
+        const prev = new Array(nodes.length).fill(-1);
+        const visited = new Set();
+        dist[startId] = 0;
+        nodes[startId].state = 'secure';
+
+        while (visited.size < nodes.length) {
+          let u = -1;
+          for (let i = 0; i < nodes.length; i++) {
+            if (!visited.has(i) && (u === -1 || dist[i] < dist[u])) u = i;
+          }
+          if (dist[u] === Infinity) break;
+          visited.add(u);
+          for (const [a, b] of edges) {
+            const v = a === u ? b : b === u ? a : -1;
+            if (v >= 0 && dist[u] + 1 < dist[v]) {
+              dist[v] = dist[u] + 1;
+              prev[v] = u;
+            }
+          }
+        }
+
+        const order = [...Array(nodes.length).keys()]
+          .filter(i => i !== startId)
+          .sort((a, b) => dist[a] - dist[b]);
+        animQueue = order;
+        runAnim('secure');
+      }
+
+      function runAnim(state) {
+        if (animating) return;
+        animating = true;
+        function step() {
+          if (animQueue.length === 0) { animating = false; return; }
+          const id = animQueue.shift();
+          nodes[id].state = state;
+          draw();
+          setTimeout(step, 40);
+        }
+        step();
+      }
+
+      canvas.addEventListener('click', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+        let closest = -1, minDist = 999;
+        for (let i = 0; i < nodes.length; i++) {
+          const d = Math.hypot(nodes[i].x - mx, nodes[i].y - my);
+          if (d < minDist) { minDist = d; closest = i; }
+        }
+        if (closest >= 0 && minDist < 30) {
+          if (mode === 'infect') bfsInfect(closest);
+          else if (mode === 'patch') dijkstraPatch(closest);
+        }
+      });
+
+      document.getElementById('pg-infect').addEventListener('click', () => {
+        mode = 'infect';
+        document.getElementById('pg-infect').classList.add('active');
+        document.getElementById('pg-patch').classList.remove('active');
+        document.getElementById('pg-hint').textContent = 'Click a node to infect';
+      });
+      document.getElementById('pg-patch').addEventListener('click', () => {
+        mode = 'patch';
+        document.getElementById('pg-patch').classList.add('active');
+        document.getElementById('pg-infect').classList.remove('active');
+        document.getElementById('pg-hint').textContent = 'Click a node to patch';
+      });
+      document.getElementById('pg-reset').addEventListener('click', () => {
+        nodes.forEach(n => n.state = 'neutral');
+        animQueue = [];
+        animating = false;
+        draw();
+      });
+    })();
   </script>
 </body>
 </html>
