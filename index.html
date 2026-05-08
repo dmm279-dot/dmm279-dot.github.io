@@ -719,13 +719,13 @@
       <div class="contact-row">domenic.maritato@gmail.com</div>
       <div class="contact-row">412-865-8696</div>
       <br/><br/>
-      <a href="mailto:domenic.maritato@email.com" class="btn" style="margin-top:8px;">Send a Message</a>
+      <a href="mailto:domenic.maritato@gmail.com" class="btn" style="margin-top:8px;">Send a Message</a>
     </div>
   </section>
 
   <footer>
     <span>Domenic Maritato</span>
-    <span>© 2026</span>
+    <span>© 2025</span>
   </footer>
 
   <script>
@@ -945,7 +945,6 @@
             vy: Math.sin(angle) * speed - 2,
             r,
             color: COLORS[Math.floor(Math.random() * COLORS.length)],
-            trail: [], life: 1, glow: Math.random() > 0.5
           });
         }
       }
@@ -969,8 +968,7 @@
             vx: Math.cos(angle) * speed,
             vy: Math.sin(angle) * speed,
             r: 2 + Math.random() * 4,
-            color: Math.random() > 0.5 ? '#a8d4ff' : '#c8eeff',
-            trail: [], life: 1, glow: true
+            color: '#a8d4ff',
           });
         }
       }
@@ -984,7 +982,7 @@
       function loop() {
         requestAnimationFrame(loop);
         const W = canvas.width, H = canvas.height;
-        ctx.fillStyle = 'rgba(13,13,13,0.18)';
+        ctx.fillStyle = '#060d1a';
         ctx.fillRect(0, 0, W, H);
         const gravity = 0.25 * gravityDir;
 
@@ -1008,27 +1006,10 @@
             if (Math.abs(b.vy) > 1) tryBounceSound();
           }
 
-          b.trail.push({ x: b.x, y: b.y });
-          if (b.trail.length > 12) b.trail.shift();
-
-          for (let t = 0; t < b.trail.length - 1; t++) {
-            const alpha = (t / b.trail.length) * 0.3;
-            ctx.beginPath();
-            ctx.moveTo(b.trail[t].x, b.trail[t].y);
-            ctx.lineTo(b.trail[t+1].x, b.trail[t+1].y);
-            ctx.globalAlpha = alpha;
-            ctx.strokeStyle = b.color;
-            ctx.lineWidth = b.r * 0.6;
-            ctx.stroke();
-            ctx.globalAlpha = 1;
-          }
-
-          if (b.glow) { ctx.shadowBlur = 18; ctx.shadowColor = b.color; }
           ctx.beginPath();
           ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
           ctx.fillStyle = b.color;
           ctx.fill();
-          ctx.shadowBlur = 0;
         }
 
         if (balls.length > 300) balls.splice(0, balls.length - 300);
@@ -1166,22 +1147,16 @@
         for (const b of bricks) {
           if (!b.alive) continue;
           ctx.fillStyle = b.color;
-          ctx.shadowBlur = 8; ctx.shadowColor = b.color;
           ctx.fillRect(b.x, b.y, b.w, b.h);
-          ctx.shadowBlur = 0;
         }
 
         ctx.fillStyle = '#a8d4ff';
-        ctx.shadowBlur = 12; ctx.shadowColor = '#a8d4ff';
         ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
-        ctx.shadowBlur = 0;
 
         ctx.beginPath();
         ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI * 2);
         ctx.fillStyle = '#ffffff';
-        ctx.shadowBlur = 14; ctx.shadowColor = '#ffffff';
         ctx.fill();
-        ctx.shadowBlur = 0;
       }
 
       canvas.addEventListener('click', () => {
@@ -1258,10 +1233,7 @@
           ctx.beginPath();
           ctx.arc(n.x, n.y, 10, 0, Math.PI * 2);
           ctx.fillStyle = color;
-          ctx.shadowBlur = n.state !== 'neutral' ? 16 : 4;
-          ctx.shadowColor = color;
           ctx.fill();
-          ctx.shadowBlur = 0;
         }
       }
 
