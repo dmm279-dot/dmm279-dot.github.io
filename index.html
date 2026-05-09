@@ -2577,19 +2577,16 @@ public class BoggleGame implements BoggleGameInterface {
       return s;
     }
 
- function showSource(id) {
-  const modal = document.getElementById('src-modal');
-  const title = document.getElementById('src-modal-title');
-  const pre = document.getElementById('src-modal-pre');
-  
-  if (sourceData[id]) {
-    title.innerText = sourceData[id].title;
-    // USE innerHTML INSTEAD OF innerText
-    pre.innerHTML = sourceData[id].code; 
-    modal.classList.add('open');
-    soundClick();
-  }
-}
+    function showSource(key) {
+      soundClick();
+      const modal = document.getElementById('src-modal');
+      document.getElementById('src-modal-title').textContent = SOURCE_TITLES[key];
+      document.getElementById('src-modal-pre').innerHTML =
+        syntaxHL(SOURCE_CODE[key], LANG_MAP[key]);
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('src-modal-body').scrollTop = 0;
+    }
 
     function closeSource() {
       document.getElementById('src-modal').classList.remove('open');
