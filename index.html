@@ -287,7 +287,6 @@
     }
     .src-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(168,212,255,0.05); }
 
-    /* Source code modal */
     #src-modal {
       display: none;
       position: fixed;
@@ -590,7 +589,6 @@
 </head>
 <body>
 
-  <!-- Source Code Modal -->
   <div id="src-modal" role="dialog" aria-modal="true" aria-labelledby="src-modal-title">
     <div id="src-modal-box">
       <div id="src-modal-header">
@@ -986,10 +984,10 @@
     // =====================================================
 
     const SOURCE_TITLES = {
-      sandbox:   'Physics Sandbox \u2014 JavaScript',
-      breakout:  'Breakout Game \u2014 MIPS Assembly',
-      pittguard: 'PittGuard \u2014 Java',
-      boggle:    'Boggle Game Engine \u2014 Java'
+      sandbox:   'Physics Sandbox — JavaScript',
+      breakout:  'Breakout Game — MIPS Assembly',
+      pittguard: 'PittGuard — Java',
+      boggle:    'Boggle Game Engine — Java'
     };
 
     const SOURCE_CODE = {};
@@ -1012,7 +1010,6 @@ function spawnBurst(cx, cy, count) {
 }
 
 function explode(cx, cy) {
-  // Push existing balls away from explosion center
   balls.forEach(b => {
     const dx = b.x - cx, dy = b.y - cy;
     const dist = Math.sqrt(dx*dx + dy*dy) || 1;
@@ -1022,17 +1019,12 @@ function explode(cx, cy) {
       b.vy += (dy / dist) * force;
     }
   });
-  // Spawn shrapnel ring
   for (let i = 0; i < 24; i++) {
     const angle = (Math.PI * 2 / 24) * i;
     const speed = 8 + Math.random() * 8;
-    balls.push({
-      x: cx, y: cy,
-      vx: Math.cos(angle) * speed,
-      vy: Math.sin(angle) * speed,
-      r: 2 + Math.random() * 4,
-      color: '#a8d4ff'
-    });
+    balls.push({ x: cx, y: cy,
+      vx: Math.cos(angle) * speed, vy: Math.sin(angle) * speed,
+      r: 2 + Math.random() * 4, color: '#a8d4ff' });
   }
 }
 
@@ -1041,57 +1033,36 @@ function loop() {
   const gravity = 0.25 * gravityDir;
   ctx.fillStyle = '#060d1a';
   ctx.fillRect(0, 0, W, H);
-
   for (let i = balls.length - 1; i >= 0; i--) {
     const b = balls[i];
-    b.vy += gravity;       // apply gravity each frame
-    b.vx *= 0.985;         // air friction
-    b.vy *= 0.985;
-    b.x  += b.vx;
-    b.y  += b.vy;
-
-    // Wall bounce with energy loss
+    b.vy += gravity; b.vx *= 0.985; b.vy *= 0.985;
+    b.x += b.vx; b.y += b.vy;
     if (b.x - b.r < 0)  { b.x = b.r;     b.vx *= -0.7; }
     if (b.x + b.r > W)  { b.x = W - b.r; b.vx *= -0.7; }
     if (b.y + b.r > H)  { b.y = H - b.r; b.vy *= -0.6; }
-
     ctx.beginPath();
     ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
-    ctx.fillStyle = b.color;
-    ctx.fill();
+    ctx.fillStyle = b.color; ctx.fill();
   }
-  // Cap particle count
   if (balls.length > 300) balls.splice(0, balls.length - 300);
 }`;
 
-    SOURCE_CODE.breakout = `; Breakout Game — MIPS Assembly (proj1)
+    SOURCE_CODE.breakout = `; Breakout Game - MIPS Assembly (proj1)
 ; Domenic Maritato  DMM279
-
-; include "display_2254_0205.asm"
-.include "proj1_constants.asm"
-.include "proj1_graphics.asm"
-.include "proj1_levels.asm"
-.include "proj1_nesfont.asm"
-.include "proj1_sincos.asm"
 
 .data
 	debug_framemode: .word 0
 	game_over:       .word 0
-
 	paddle_x:        .word 0
-	.eqv PADDLE_Y 10000
-
+	.eqv PADDLE_Y    10000
 	ball_y:          .word 0
 	ball_x:          .word 0
 	ball_old_y:      .word 0
 	ball_old_x:      .word 0
 	ball_vx:         .word 0
 	ball_vy:         .word 0
-
 	ball_state:      .word STATE_ON_PADDLE
-
 	blocks: .byte
-		# feel free to change these for testing.
 		0 0 0 0 0 0 0 1
 		0 0 0 0 0 0 0 1
 		0 0 0 0 0 0 0 1
@@ -1104,502 +1075,116 @@ function loop() {
 		1 0 0 0 0 0 0 1
 .text
 
-.globl main
-main:
-	# initialize display
-	li  a0, 15 # ms/frame
-	li  a1, 1  # enable framebuffer
-	li  a2, 1  # enable tilemap
-	jal display_init
-
-	jal load_graphics
-
-	# change this to whatever color you want for the background.
-	# alternatively, draw something on the framebuffer if you want
-	# something more interesting than a plain color background!
-	li t0, 0x335577
-	sw t0, display_palette_ram
-
-	# uncomment these lines to load another level.
-	# change the la line to one of the levels from proj1_levels.asm.
-	#la  a0, test_level
-	#jal load_blocks
-
-	jal draw_blocks
-
-	_loop:
-		jal update_paddle
-		jal update_ball
-
-		jal draw_paddle
-		jal draw_ball
-		jal draw_hud
-
-		jal display_finish_frame
-
-		# comment this out to disable the single-frame stepping mode.
-		jal debug_do_framemode
-
-		jal display_clear_auto_sprites
-		jal display_clear_text_sprites
-	lw t0, game_over
-	beq t0, 0, _loop
-
-	jal show_game_over_message
-	# exit
-	li v0, 10
-	syscall
-
-#-----------------------------------------
-
-load_graphics:
-push ra
-	jal load_game_graphics
-	jal load_nes_font_sprite
-
-	# text sprites will be 0-63 (so they're on top)
-	li a0, 0
-	li a1, 64
-	jal display_set_text_sprites
-
-	# normal sprites will be 64-255
-	li a0, 64
-	li a1, 255
-	jal display_set_auto_sprites
-pop ra
-jr ra
-
-#-----------------------------------------
-
-# you can absolutely change this function to show whatever you want.
-show_game_over_message:
-push ra
-	li a0, 2
-	li a1, 60
-	lstr a2, "congratulations!"
-	jal display_draw_text_sprites
-
-	jal display_finish_frame
-pop ra
-jr ra
-
-#-----------------------------------------
-debug_do_framemode:
-push ra
-	lw t0, debug_framemode
-	beq t0, 0, _normal
-		_wait:
-			jal display_finish_frame
-			display_is_key_pressed t0, KEY_R
-			beq t0, 0, _endif_r
-				sw zero, debug_framemode
-				j _endif
-			_endif_r:
-		display_is_key_pressed t0, KEY_F
-		beq t0, 0, _wait
-	j _endif
-	_normal:
-		display_is_key_pressed t0, KEY_R
-		beq t0, 0, _endif
-			li t0, 1
-			sw t0, debug_framemode
-			j _wait
-	_endif:
-pop ra
-jr ra
-
-#------------------------------------------------------------------------------------------------
-# Blocks
-#------------------------------------------------------------------------------------------------
-
-# a0 = address of level data
-load_blocks:
-push ra
-	li t0, 0
-	_loop:
-		lb t1, (a0)
-		sb t1, blocks(t0)
-		add a0, a0, 1
-	add t0, t0, 1
-	blt t0, N_BLOCKS, _loop
-
-	# then draw em
-	jal draw_blocks
-pop ra
-jr ra
-
-#------------------------------------------------------------------------------------------------
-# Paddle
-#------------------------------------------------------------------------------------------------
-
-update_paddle:
-push ra
-	lw t0, display_mouse_x
-	blt t0, 0, end_paddle
-	
-	mul t0, t0, SCALE
-
-	li t1, PADDLE_MIN_X
-	blt t0, t1, set_min_x
-	li t1, PADDLE_MAX_X
-	bgt t0, t1, set_max_x
-	j set_paddle_x
-
-set_min_x:
-	li t0, PADDLE_MIN_X
-	j set_paddle_x
-
-set_max_x:
-	li t0, PADDLE_MAX_X
-
-set_paddle_x:
-	sw t0, paddle_x
-
-	end_paddle:
-	pop ra
-	jr ra
-
-#------------------------------------------------------------------------------------------------
-# Ball
-#------------------------------------------------------------------------------------------------
-
 update_ball:
 	push	ra
-	lw t0, ball_state
-	li t1, STATE_ON_PADDLE
-	beq t0, t1, ball_on_paddle
-	li t1, STATE_MOVING
-	beq t0, t1, ball_moving
-	
-	j end_update_ball
+	lw	t0, ball_state
+	li	t1, STATE_ON_PADDLE
+	beq	t0, t1, ball_on_paddle
+	li	t1, STATE_MOVING
+	beq	t0, t1, ball_moving
+	j	end_update_ball
 
 ball_on_paddle:
-	lw t0, paddle_x
-	sw t0, ball_x
-	li t1, PADDLE_Y
-	sub t1, t1, BALL_HALFHEIGHT
-	sw t1, ball_y
-
-	sw zero, ball_vx
-	sw zero, ball_vy
-
-	lw t0, display_mouse_pressed
-	srl t0, t0, 0
-	beqz t0, end_update_ball
-
-	li t0, STATE_MOVING
-	sw t0, ball_state
-	li t0, BALL_INITIAL_VX
-	sw t0, ball_vx
-	li t0, BALL_INITIAL_VY
-	sw t0, ball_vy
-
-	j end_update_ball
+	lw	t0, paddle_x
+	sw	t0, ball_x
+	li	t1, PADDLE_Y
+	sub	t1, t1, BALL_HALFHEIGHT
+	sw	t1, ball_y
+	sw	zero, ball_vx
+	sw	zero, ball_vy
+	; launch on mouse click
+	lw	t0, display_mouse_pressed
+	beqz	t0, end_update_ball
+	li	t0, STATE_MOVING
+	sw	t0, ball_state
+	li	t0, BALL_INITIAL_VX
+	sw	t0, ball_vx
+	li	t0, BALL_INITIAL_VY
+	sw	t0, ball_vy
+	j	end_update_ball
 
 ball_moving:
-	lw t0, ball_x
-	sw t0, ball_old_x
-	lw t0, ball_y
-	sw t0, ball_old_y
-
-	lw t0, ball_x
-	lw t1, ball_vx
-	add t0, t0, t1
-	sw t0, ball_x
-		
-	jal ball_check_lr
-
-	lw t0, ball_y
-	lw t1, ball_vy
-	add t0, t0, t1
-	sw t0, ball_y
-
-	jal ball_check_ud
-	jal ball_check_paddle
-
-	jal ball_check_paddle
+	; save old position (used to rollback on collision)
+	lw	t0, ball_x
+	sw	t0, ball_old_x
+	lw	t0, ball_y
+	sw	t0, ball_old_y
+	; step X - check left/right walls + blocks
+	lw	t0, ball_x
+	lw	t1, ball_vx
+	add	t0, t0, t1
+	sw	t0, ball_x
+	jal	ball_check_lr
+	; step Y - check top/bottom + blocks
+	lw	t0, ball_y
+	lw	t1, ball_vy
+	add	t0, t0, t1
+	sw	t0, ball_y
+	jal	ball_check_ud
+	; paddle collision
+	jal	ball_check_paddle
 	beqz	v0, no_paddle_collision
-	lw t0, ball_vy
-	neg t0, t0
-	sw t0, ball_vy
+	lw	t0, ball_vy
+	neg	t0, t0
+	sw	t0, ball_vy
 	no_paddle_collision:
-
 end_update_ball:
-	pop ra
-	jr ra
+	pop	ra
+	jr	ra
 
-#-----------------------------------------
+; ---- Angle bounce using sin/cos lookup table ----
+; Maps hit offset [-HALFWIDTH..+HALFWIDTH] -> angle [0..75 deg]
+ball_bounce_paddle:
+	push	ra
+	lw	t0, ball_old_y
+	sw	t0, ball_y
+	lw	t0, ball_x
+	lw	t1, paddle_x
+	sub	t2, t0, t1
+	abs	t2, t2
+	li	t3, 75
+	mul	t2, t2, t3
+	li	t3, PADDLE_HALFWIDTH
+	div	t2, t2, t3
+	move	a0, t2
+	jal	sin_cos          ; returns v0=sin, v1=cos (scaled x1000000)
+	li	t0, 14142        ; target speed = sqrt(2)*10000
+	mul	v0, v0, t0
+	li	t1, -14142
+	mul	v1, v1, t1
+	li	t0, 1000000
+	div	v0, v0, t0
+	div	v1, v1, t0
+	; negate vx if ball hit left half of paddle
+	lw	t0, ball_x
+	lw	t1, paddle_x
+	bge	t0, t1, skip_negate
+	neg	v0, v0
+skip_negate:
+	sw	v0, ball_vx
+	sw	v1, ball_vy
+	pop	ra
+	jr	ra
 
+; ---- Block collision (left/right) ----
 ball_check_lr:
-push ra
-	lw t0, ball_x
-	li t1, BALL_MIN_X
-	blt t0, t1, bounce_horiz
-	li t1, BALL_MAX_X
-	bgt t0, t1, bounce_horiz
-	
-	jal ball_get_block_lr
-	beq v0, BLOCK_EMPTY, end_ball_check_lr
-	
-	move a0, v1
-	jal destroy_block
-	j bounce_horiz
-	
+	push	ra
+	lw	t0, ball_x
+	li	t1, BALL_MIN_X
+	blt	t0, t1, bounce_horiz
+	li	t1, BALL_MAX_X
+	bgt	t0, t1, bounce_horiz
+	jal	ball_get_block_lr
+	beq	v0, BLOCK_EMPTY, end_ball_check_lr
+	move	a0, v1
+	jal	destroy_block
 bounce_horiz:
-	lw t0, ball_old_x
-	sw t0, ball_x
-	lw t0, ball_vx
-	sub t0, zero, t0
-	sw t0, ball_vx
-	
+	lw	t0, ball_old_x
+	sw	t0, ball_x
+	lw	t0, ball_vx
+	sub	t0, zero, t0
+	sw	t0, ball_vx
 end_ball_check_lr:
-pop ra
-jr ra
-
-#-----------------------------------------
-
-ball_check_ud:
-push ra
-	lw t0, ball_y
-	li t1, BALL_MIN_Y
-	blt t0, t1, bounce_vert
-	li t1, BALL_MAX_Y
-	bgt t0, t1, kill_ball
-	
-	jal ball_get_block_ud
-	beq v0, BLOCK_EMPTY, end_ball_check_ud
-	
-	move a0, v1
-	jal destroy_block
-	j bounce_vert
-	
-bounce_vert:
-	lw t0, ball_old_y
-	sw t0, ball_y
-	lw t0, ball_vy
-	sub t0, zero, t0
-	sw t0, ball_vy
-	
-	j end_ball_check_ud
-	
-kill_ball:
-	li t0, STATE_ON_PADDLE
-	sw t0, ball_state
-	
-end_ball_check_ud:
-pop ra
-jr ra
-
-#-----------------------------------------
-
-ball_check_paddle:
-push ra
-	li v0, 0
-
-	lw t0, ball_vy
-	bltz t0, not_hitting
-	
-	lw t0, ball_y
-	li t1, PADDLE_Y
-	bgt t0, t1, not_hitting
-
-	li t1, PADDLE_Y
-	sub t1, t1, BALL_HALFHEIGHT
-	ble t0, t1, not_hitting
-
-	lw t0, ball_x
-	lw t1, paddle_x
-	sub t1, t1, PADDLE_HALFWIDTH
-	blt t0, t1, not_hitting
-
-	lw t1, paddle_x
-	add t1, t1, PADDLE_HALFWIDTH
-	bgt t0, t1, not_hitting
-
-	li v0, 1
-	
-	jal ball_bounce_paddle
-	j end_ball_check_paddle
-
-not_hitting:
-	li v0, 0
-
-end_ball_check_paddle:
-pop ra
-jr ra
-
-#------------------------------------------------------------------------------------------------
-# Drawing
-#------------------------------------------------------------------------------------------------
-
-draw_blocks:
-	push	ra
-	push	s0
-	push	s1
-	push	s2
-
-	li s0, 0
-
-row_loop:
-	bge s0, BLOCK_ROWS, end_row_loop
-	li s1, 0
-
-column_loop:
-	bge s1, BLOCK_COLS, end_column_loop
-
-	mul t2, s0, BLOCK_COLS
-	add t2, t2, s1
-	lb t3, blocks(t2)
-
-	beqz	t3, empty_block
-
-	add t4, t3, -1
-	lb t5, block_palette_starts(t4)
-
-	mul t6, s1, 2
-	add t7, t6, 1
-
-	move a0, t6
-	move	a1, s0
-	
-	li a2, BLOCK_TILE
-	
-	move a3, t5
-	
-	jal display_set_tile
-
-	move a0, t7
-	move a1, s0
-	
-	li t0, BLOCK_TILE
-	
-	add a2, t0, 1
-	move a3, t5
-	jal display_set_tile
-
-	j next_column
-
-empty_block:
-	mul t6, s1, 2
-	add t7, t6, 1
-
-	move a0, t6
-	move a1, s0
-	
-	li a2, EMPTY_TILE
-	li a3, 0
-	
-	jal display_set_tile
-
-	move a0, t7
-	move a1, s0
-	
-	li a2, EMPTY_TILE
-	li a3, 0
-	
-	jal display_set_tile
-
-next_column:
-	add s1, s1, 1
-	j column_loop
-
-end_column_loop:
-	add s0, s0, 1
-	j row_loop
-
-end_row_loop:
-	pop s2
-	pop s1
-	pop s0
-	pop ra
-	jr ra
-#-----------------------------------------
-
-draw_paddle:
-push ra
-	lw t0, paddle_x
-	li t1, PADDLE_HALFWIDTH
-	li t2, 400
-	li t3, SCALE
-	
-	sub t4, t0, t1
-	div t4, t4, t3
-
-	sub t5, t0, t2
-	div t5, t5, t3
-
-	add t6, t0, t2
-	div t6, t6, t3
-
-	li t7, PADDLE_Y
-	div t7, t7, t3
-
-	move a0, t4
-	move a1, t7
-	li a2, PADDLE_TILE_LEFT
-	li a3, PADDLE_FLAGS
-	
-	jal display_draw_sprite
-
-	move a0, t5
-	move a1, t7
-	li a2, PADDLE_TILE_MID
-	li a3, PADDLE_FLAGS
-	
-	jal display_draw_sprite
-
-	move a0, t6
-	move a1, t7
-	li a2, PADDLE_TILE_RIGHT
-	li a3, PADDLE_FLAGS
-	
-	jal display_draw_sprite
-
-	pop ra
-	jr ra
-
-#-----------------------------------------
-
-draw_ball:
-	push ra
-		# Calculate ball sprite position
-		lw t0, ball_x
-		sub t0, t0, BALL_HALFWIDTH
-		div t0, t0, SCALE
-
-		lw t1, ball_y
-		sub t1, t1, BALL_HALFHEIGHT
-		div t1, t1, SCALE
-
-		# Draw the ball sprite
-		move a0, t0
-		move a1, t1
-		li a2, BALL_TILE
-		li a3, BALL_FLAGS
-		jal display_draw_sprite
-
-	pop ra
-	jr ra
-
-#-----------------------------------------
-
-# Block-related functions
-
-get_block:
-	push	ra
-	div	t0, a0, BLOCK_W
-	div	t1, a1, BLOCK_H
-	mul	t2, t1, BLOCK_COLS
-	add	t2, t2, t0
-	li	t3, N_BLOCKS
-	bge	t2, t3, out_of_bounds
-	lb	v0, blocks(t2)
-	move	v1, t2
-	j	end_get_block
-out_of_bounds:
-	li	v0, BLOCK_EMPTY
-	li	v1, -1
-end_get_block:
 	pop	ra
 	jr	ra
 
@@ -1617,109 +1202,43 @@ check_all_blocks_destroyed:
 	li	t0, 0
 _loop:
 	lb	t1, blocks(t0)
-	bne	t1, BLOCK_EMPTY, end_check_all_blocks_destroyed
+	bne	t1, BLOCK_EMPTY, end_check
 	add	t0, t0, 1
 	blt	t0, N_BLOCKS, _loop
 	li	t0, 1
 	sw	t0, game_over
-end_check_all_blocks_destroyed:
+end_check:
 	pop	ra
 	jr	ra
 
-ball_get_block_lr:
+update_paddle:
 	push	ra
-	lw	t0, ball_vx
-	bge	t0, zero, check_right
-	lw	t0, ball_x
-	sub	t0, t0, BALL_HALFWIDTH
-	j	check_block_lr
-check_right:
-	lw	t0, ball_x
-	add	t0, t0, BALL_HALFWIDTH
-	sub	t0, t0, 100
-check_block_lr:
-	div	a0, t0, SCALE
-	lw	a1, ball_y
-	div	a1, a1, SCALE
-	jal	get_block
+	lw	t0, display_mouse_x
+	blt	t0, 0, end_paddle
+	mul	t0, t0, SCALE
+	li	t1, PADDLE_MIN_X
+	blt	t0, t1, set_min_x
+	li	t1, PADDLE_MAX_X
+	bgt	t0, t1, set_max_x
+	j	set_paddle_x
+set_min_x:
+	li	t0, PADDLE_MIN_X
+	j	set_paddle_x
+set_max_x:
+	li	t0, PADDLE_MAX_X
+set_paddle_x:
+	sw	t0, paddle_x
+end_paddle:
 	pop	ra
-	jr	ra
+	jr	ra`;
 
-ball_get_block_ud:
-	push	ra
-	lw	t0, ball_vy
-	bge	t0, zero, check_bottom
-	lw	t0, ball_y
-	sub	t0, t0, BALL_HALFHEIGHT
-	j	check_block_ud
-check_bottom:
-	lw	t0, ball_y
-	add	t0, t0, BALL_HALFHEIGHT
-	sub	t0, t0, 100
-check_block_ud:
-	lw	a0, ball_x
-	div	a0, a0, SCALE
-	div	a1, t0, SCALE
-	jal	get_block
-	pop	ra
-	jr	ra
-#-----------------------------------------
-
-ball_bounce_paddle:
-push	ra
-
-	lw t0, ball_old_y
-	sw t0, ball_y
-
-	lw t0, ball_x
-	lw t1, paddle_x
-	sub t2, t0, t1
-	abs t2, t2
-
-	li t3, 75
-	mul t2, t2, t3
-	li t3, PADDLE_HALFWIDTH
-	div t2, t2, t3
-
-	move a0, t2
-	jal sin_cos
-
-	li t0, 14142
-	mul v0, v0, t0
-	li t1, -14142
-	mul v1, v1, t1
-
-	li t0, 1000000
-	div v0, v0, t0
-	div v1, v1, t0
-
-	lw t0, ball_x
-	lw t1, paddle_x
-	bge t0, t1, skip_negate
-	neg v0, v0
-
-skip_negate:
-	sw v0, ball_vx
-	sw v1, ball_vy
-
-	pop ra
-	jr ra
-	
-draw_hud:
-push ra
-
-pop ra
-jr ra
-`;
-    SOURCE_CODE.pittguard = `// PittGuard.java — network security simulation
-// import java.util.*;
+    SOURCE_CODE.pittguard = `import java.util.*;
 import java.io.*;
 
 public class PittGuard {
 
     public static void main(String[] args) throws Exception {
 
-        // grab all the command line stuff
         String mode = null;
         String fileName = null;
         String startNode = null;
@@ -1729,27 +1248,13 @@ public class PittGuard {
 
         int i = 0;
         while (i < args.length) {
-            if (args[i].equals("--mode")) {
-                mode = args[i + 1];
-                i += 2;
-            } else if (args[i].equals("--input")) {
-                fileName = args[i + 1];
-                i += 2;
-            } else if (args[i].equals("--src")) {
-                startNode = args[i + 1];
-                i += 2;
-            } else if (args[i].equals("--dst")) {
-                endNode = args[i + 1];
-                i += 2;
-            } else if (args[i].equals("--server")) {
-                serverNode = args[i + 1];
-                i += 2;
-            } else if (args[i].equals("--directed")) {
-                directed = true;
-                i++;
-            } else {
-                i++;
-            }
+            if (args[i].equals("--mode"))       { mode = args[i+1];       i += 2; }
+            else if (args[i].equals("--input")) { fileName = args[i+1];   i += 2; }
+            else if (args[i].equals("--src"))   { startNode = args[i+1];  i += 2; }
+            else if (args[i].equals("--dst"))   { endNode = args[i+1];    i += 2; }
+            else if (args[i].equals("--server")){ serverNode = args[i+1]; i += 2; }
+            else if (args[i].equals("--directed")) { directed = true; i++; }
+            else { i++; }
         }
 
         if (mode == null || fileName == null) {
@@ -1757,10 +1262,8 @@ public class PittGuard {
             System.exit(1);
         }
 
-        // open the file
         Scanner sc = new Scanner(new File(fileName));
 
-        // skip blank lines and comments to get the node count
         int numNodes = 0;
         while (sc.hasNextLine()) {
             String line = sc.nextLine().trim();
@@ -1775,74 +1278,51 @@ public class PittGuard {
         int count = 0;
         while (sc.hasNextLine() && count != numNodes) {
             String line = sc.nextLine().trim();
-            if (line.isEmpty() || line.startsWith("#"))
-                continue;
-            String[] words = line.split("\\s+");
+            if (line.isEmpty() || line.startsWith("#")) continue;
+            String[] words = line.split("\s+");
             hackable.put(words[0], Boolean.parseBoolean(words[1]));
             count++;
         }
 
-        // build the graph - each entry is {neighbor, latency, encryption}
+        // build graph - each entry is {neighbor, latency, encryption}
         HashMap<String, ArrayList<String[]>> graph = new HashMap<>();
-        for (String node : hackable.keySet()) {
-            graph.put(node, new ArrayList<>());
-        }
+        for (String node : hackable.keySet()) { graph.put(node, new ArrayList<>()); }
 
-        // read all the edges
         while (sc.hasNextLine()) {
             String line = sc.nextLine().trim();
-            if (line.isEmpty() || line.startsWith("#"))
-                continue;
-            String[] words = line.split("\\s+");
-            if (words.length < 4)
-                continue;
-            String u = words[0];
-            String v = words[1];
-            String lat = words[2];
-            String enc = words[3];
+            if (line.isEmpty() || line.startsWith("#")) continue;
+            String[] words = line.split("\s+");
+            if (words.length < 4) continue;
+            String u = words[0], v = words[1], lat = words[2], enc = words[3];
             if (directed) {
-                graph.get(u).add(new String[] { v, lat, enc });
+                graph.get(u).add(new String[]{ v, lat, enc });
             } else {
-                graph.get(u).add(new String[] { v, lat, enc });
-                graph.get(v).add(new String[] { u, lat, enc });
+                graph.get(u).add(new String[]{ v, lat, enc });
+                graph.get(v).add(new String[]{ u, lat, enc });
             }
         }
         sc.close();
 
-        if (mode.equals("infect")) {
-            runBFS(startNode, endNode, hackable, graph);
-        } else if (mode.equals("patch")) {
-            runDijkstra(serverNode, hackable, graph);
-        } else {
-            System.err.println("Error: unknown mode " + mode);
-            System.exit(1);
-        }
+        if      (mode.equals("infect")) { runBFS(startNode, endNode, hackable, graph); }
+        else if (mode.equals("patch"))  { runDijkstra(serverNode, hackable, graph); }
+        else { System.err.println("Error: unknown mode " + mode); System.exit(1); }
     }
 
-    // task 1 - bfs but only through vulnerable nodes
-    static void runBFS(String startNode, String endNode, HashMap<String, Boolean> hackable, HashMap<String, ArrayList<String[]>> graph) {
+    // BFS through vulnerable nodes only
+    static void runBFS(String startNode, String endNode,
+            HashMap<String, Boolean> hackable,
+            HashMap<String, ArrayList<String[]>> graph) {
 
-        if (startNode == null || endNode == null) {
-            System.err.println("Error: need --src and --dst");
-            System.exit(1);
-        }
         if (!hackable.containsKey(startNode) || !hackable.containsKey(endNode)) {
-            System.err.println("Error: unknown node");
-            System.exit(1);
+            System.err.println("Error: unknown node"); System.exit(1);
         }
-
-        // if either endpoint isnt vulnerable just return -1
+        // if either endpoint isn't vulnerable, return -1
         if (!hackable.get(startNode) || !hackable.get(endNode)) {
-            System.out.println(-1);
-            return;
+            System.out.println(-1); return;
         }
+        if (startNode.equals(endNode)) { System.out.println(0); return; }
 
-        if (startNode.equals(endNode)) {
-            System.out.println(0);
-            return;
-        }
-
-        // jumpCount tracks how many hops to reach each node
+        // jumpCount tracks hop count to each node
         HashMap<String, Integer> jumpCount = new HashMap<>();
         Queue<String> toVisit = new LinkedList<>();
         jumpCount.put(startNode, 0);
@@ -1852,9 +1332,9 @@ public class PittGuard {
             String current = toVisit.poll();
             int stepsSoFar = jumpCount.get(current);
 
-            for (String[] edge : graph.get(current)) { //relax
+            for (String[] edge : graph.get(current)) {
                 String neighbor = edge[0];
-                // skip non-vulnerable neighbors
+                // only propagate through vulnerable nodes
                 if (hackable.get(neighbor) && jumpCount.get(neighbor) == null) {
                     jumpCount.put(neighbor, stepsSoFar + 1);
                     toVisit.add(neighbor);
@@ -1862,66 +1342,44 @@ public class PittGuard {
             }
         }
 
-        // check if we made it to endNode
-        if (jumpCount.containsKey(endNode)) {
-            System.out.println(jumpCount.get(endNode));
-        } else {
-            System.out.println(-1);
-        }
+        System.out.println(jumpCount.containsKey(endNode) ? jumpCount.get(endNode) : -1);
     }
 
-    // task 2 - dijkstra from patch server to all vulnerable nodes
-    static void runDijkstra(String serverNode, HashMap<String, Boolean> hackable, HashMap<String, ArrayList<String[]>> graph) {
+    // Dijkstra from patch server - cost = latency * (1 + (3 - enc) / 10)
+    static void runDijkstra(String serverNode,
+            HashMap<String, Boolean> hackable,
+            HashMap<String, ArrayList<String[]>> graph) {
 
-        if (serverNode == null) {
-            System.err.println("Error: need --server");
-            System.exit(1);
-        }
         if (!hackable.containsKey(serverNode)) {
-            System.err.println("Error: server node doesnt exist");
-            System.exit(1);
+            System.err.println("Error: server node doesn't exist"); System.exit(1);
         }
         if (hackable.get(serverNode)) {
-            System.err.println("Error: server cant be vulnerable");
-            System.exit(1);
+            System.err.println("Error: server can't be vulnerable"); System.exit(1);
         }
 
-        // distances starts everything at infinity
         HashMap<String, Double> distances = new HashMap<>();
-        for (String node : hackable.keySet()) {
-            distances.put(node, Double.MAX_VALUE);
-        }
+        for (String node : hackable.keySet()) { distances.put(node, Double.MAX_VALUE); }
         distances.put(serverNode, 0.0);
 
-        // priority queue that picks the cheapest node next
-        Comparator<String> byDist = new Comparator<String>() {
-            public int compare(String a, String b) {
-                return Double.compare(distances.get(a), distances.get(b));
-            }
-        };
-
-        PriorityQueue<String> pq = new PriorityQueue<>(byDist);
+        PriorityQueue<String> pq = new PriorityQueue<>(
+            (a, b) -> Double.compare(distances.get(a), distances.get(b))
+        );
         pq.add(serverNode);
-
         HashSet<String> seen = new HashSet<>();
 
         while (!pq.isEmpty()) {
             String current = pq.poll();
-
-            if (seen.contains(current))
-                continue;
+            if (seen.contains(current)) continue;
             seen.add(current);
-
-            double myCost = distances.get(current);
 
             for (String[] edge : graph.get(current)) {
                 String neighbor = edge[0];
-                double latency = Double.parseDouble(edge[1]);
-                int enc = Integer.parseInt(edge[2]);
+                double latency  = Double.parseDouble(edge[1]);
+                int    enc      = Integer.parseInt(edge[2]);
 
-                // effective cost formula from the spec
+                // effective cost formula
                 double realCost = latency * (1.0 + (3 - enc) / 10.0);
-                double newCost = myCost + realCost;
+                double newCost  = distances.get(current) + realCost;
 
                 if (newCost < distances.get(neighbor)) {
                     distances.put(neighbor, newCost);
@@ -1930,30 +1388,24 @@ public class PittGuard {
             }
         }
 
-        // first check if any vulnerable node is totally unreachable
+        // check for unreachable vulnerable nodes
         for (String node : hackable.keySet()) {
             if (hackable.get(node) && distances.get(node) == Double.MAX_VALUE) {
-                System.out.println("INF");
-                return;
+                System.out.println("INF"); return;
             }
         }
 
-        // then grab the biggest distance among vulnerable nodes
+        // answer = worst-case patch time across all vulnerable nodes
         double biggestDist = 0.0;
         for (String node : hackable.keySet()) {
-            if (hackable.get(node)) {
-                if (distances.get(node) > biggestDist)
-                    biggestDist = distances.get(node);
-            }
+            if (hackable.get(node) && distances.get(node) > biggestDist)
+                biggestDist = distances.get(node);
         }
-
         System.out.printf("%.1f%n", biggestDist);
     }
-}
-`;
+}`;
 
-    SOURCE_CODE.boggle = `// BoggleGame.java — DFS + backtracking word search
-import java.util.ArrayList;
+    SOURCE_CODE.boggle = `import java.util.ArrayList;
 import java.util.Random;
 import java.util.HashSet;
 
@@ -1968,557 +1420,158 @@ public class BoggleGame implements BoggleGameInterface {
 
     @Override
     public char[][] generateBoggleBoard(int size) {
-        if (size <= 0) {
-            return null;
-        }
+        if (size <= 0) { return null; }
         int stringLength = size * size;
-        if (stringLength <= 0) {
-            return null;
-        }
+        if (stringLength <= 0) { return null; }
         String s = generateRandomString(stringLength);
         char[][] board = new char[size][size];
-        for (int i = 0; i < size; i++) {
-            for (int j = 0; j < size; j++) {
+        for (int i = 0; i < size; i++)
+            for (int j = 0; j < size; j++)
                 board[i][j] = s.charAt(i * size + j);
-            }
-        }
         return board;
     }
 
     @Override
     public int countWords(char[][] boggleBoard, DictInterface dictionary) {
-        if (boggleBoard == null || dictionary == null) {
-            return 0;
-        }
-
+        if (boggleBoard == null || dictionary == null) { return 0; }
         this.board = boggleBoard;
         this.dictionary = dictionary;
-
         rows = board.length;
         cols = board[0].length;
+        used  = new boolean[rows][cols];
+        words = new HashSet<>();   // HashSet deduplicates words
 
-        used = new boolean[rows][cols];
-        // ensure no duplicate words
-        words = new HashSet<>();
-
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
+        for (int r = 0; r < rows; r++)
+            for (int c = 0; c < cols; c++)
                 dfs(r, c, new StringBuilder());
-            }
-        }
 
         return words.size();
     }
 
-    // check adjacent tiles
+    // DFS + backtracking word search, pruned by trie prefix
     private void dfs(int r, int c, StringBuilder current) {
-        // bounds check
-        if (r < 0 || c < 0 || r >= rows || c >= cols) {
-            return;
-        }
-        // check if tile used
-        if (used[r][c]) {
-            return;
-        }
-        // add the letter
+        if (r < 0 || c < 0 || r >= rows || c >= cols) return;
+        if (used[r][c]) return;
+
         current.append(board[r][c]);
-        // 1: prefix 2: word 3: word & prefix
-        int result = dictionary.searchPrefix(new StringBuilder(current.toString().toLowerCase()));
-        // prune. undo & backtrack if not a prefix or word
-        if (result == 0) {
+
+        // searchPrefix: 0=dead-end  1=prefix  2=word  3=both
+        int result = dictionary.searchPrefix(
+            new StringBuilder(current.toString().toLowerCase())
+        );
+
+        if (result == 0) {     // prune - nothing valid down this path
             current.deleteCharAt(current.length() - 1);
             return;
         }
-        // is string valid
-        if (current.length() >= 3 && (result == 2 || result == 3)) {
+        if (current.length() >= 3 && (result == 2 || result == 3))
             words.add(current.toString());
-        }
-        // mark current tile as used
-        used[r][c] = true;
-        // explore neighbors
-        for (int br = -1; br <= 1; br++) {
+
+        used[r][c] = true;     // lock tile for this path
+
+        for (int br = -1; br <= 1; br++)
             for (int bc = -1; bc <= 1; bc++) {
-                // skip current tile
-                if (br == 0 && bc == 0) {
-                    continue;
-                }
-                // recursive call
-                dfs(r + br, c + bc, current);
+                if (br == 0 && bc == 0) continue;
+                dfs(r + br, c + bc, current);  // explore all 8 neighbors
             }
-        }
-        // unlock for next neighbors
-        used[r][c] = false;
-        // reset
+
+        used[r][c] = false;    // backtrack - unlock tile
         current.deleteCharAt(current.length() - 1);
-    }
-
-    @Override
-    public int countWordsOfCertainLength(char[][] boggleBoard, DictInterface dictionary, int wordLength) {
-        if (boggleBoard == null || dictionary == null || wordLength <= 0) {
-            return 0;
-        }
-
-        this.board = boggleBoard;
-        this.dictionary = dictionary;
-
-        rows = board.length;
-        cols = board[0].length;
-
-        used = new boolean[rows][cols];
-        words = new HashSet<>();
-
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-                dfsLength(r, c, new StringBuilder(), wordLength);
-            }
-        }
-        return words.size();
-    }
-
-    // handle dfs for length checks
-    private void dfsLength(int r, int c, StringBuilder current, int wordLength) {
-        // bounds check
-        if (r < 0 || c < 0 || r >= rows || c >= cols) {
-            return;
-        }
-        // check if tile used
-        if (used[r][c]) {
-            return;
-        }
-        // add the letter
-        current.append(board[r][c]);
-        // 1: prefix 2: word 3: word & prefix
-        int result = dictionary.searchPrefix(new StringBuilder(current.toString().toLowerCase()));
-        // prune. undo & backtrack if not a prefix or word
-        if (result == 0) {
-            current.deleteCharAt(current.length() - 1);
-            return;
-        }
-        // check if wordlength matches
-        if (current.length() == wordLength && (result == 2 || result == 3)) {
-            words.add(current.toString());
-        }
-        // stop exploring paths
-        if (current.length() < wordLength) {
-            // lock tile
-            used[r][c] = true;
-            // explore neighbors
-            for (int br = -1; br <= 1; br++) {
-                for (int bc = -1; bc <= 1; bc++) {
-                    if (br == 0 && bc == 0) { // skip current tile
-                        continue;
-                    }
-                    dfsLength(r + br, c + bc, current, wordLength);
-                }
-            }
-            // done exploring paths so unlock
-            used[r][c] = false;
-        }
-        // resets word
-        current.deleteCharAt(current.length() - 1);
-    }
-
-    @Override
-    public boolean isWordInDictionary(DictInterface dictionary, String word) {
-        if (word == null) {
-            return false;
-        }
-        int result = dictionary.searchPrefix(new StringBuilder(word));
-        return result == 2 || result == 3;
     }
 
     @Override
     public boolean isWordInBoard(char[][] boggleBoard, String word) {
-        if (boggleBoard == null || word == null) {
-            return false;
-        }
-
+        if (boggleBoard == null || word == null) { return false; }
         this.board = boggleBoard;
-
         rows = board.length;
         cols = board[0].length;
-
-        // try to find a starting point
-        for (int r = 0; r < rows; r++) {
+        for (int r = 0; r < rows; r++)
             for (int c = 0; c < cols; c++) {
-
                 used = new boolean[rows][cols];
-                // start searching
-                if (dfsMatch(r, c, word, 0)) {
-                    return true;
-                }
+                if (dfsMatch(r, c, word, 0)) return true;
             }
-        }
         return false;
     }
 
-    // dfs for isWordInBoard
     private boolean dfsMatch(int r, int c, String word, int index) {
-
-        // bounds check
-        if (r < 0 || c < 0 || r >= rows || c >= cols) {
-            return false;
-        }
-
-        // tile already used
-        if (used[r][c]) {
-            return false;
-        }
-
-        // letter mismatch
-        if (Character.toLowerCase(board[r][c]) != word.charAt(index)) {
-            return false;
-        }
-
-        // full word matched
-        if (index == word.length() - 1) {
-            return true;
-        }
-
-        // mark tile as used
+        if (r < 0 || c < 0 || r >= rows || c >= cols) return false;
+        if (used[r][c]) return false;
+        if (Character.toLowerCase(board[r][c]) != word.charAt(index)) return false;
+        if (index == word.length() - 1) return true;
         used[r][c] = true;
-
-        // explore all 8 neighboring tiles
-        for (int br = -1; br <= 1; br++) {
+        for (int br = -1; br <= 1; br++)
             for (int bc = -1; bc <= 1; bc++) {
-
-                // skip the current tile
-                if (br == 0 && bc == 0) {
-                    continue;
-                }
-
-                // recursive search on neighbor
+                if (br == 0 && bc == 0) continue;
                 if (dfsMatch(r + br, c + bc, word, index + 1)) {
-                    used[r][c] = false;
-                    return true;
+                    used[r][c] = false; return true;
                 }
             }
-        }
-
-        // backtrack (unmark tile)
         used[r][c] = false;
-
         return false;
     }
 
-    @Override
-    public String anyWord(char[][] boggleBoard, DictInterface dictionary) {
-        if (boggleBoard == null || dictionary == null) {
-            return null;
-        }
-
-        this.board = boggleBoard;
-        this.dictionary = dictionary;
-
-        rows = board.length;
-        cols = board[0].length;
-
-        used = new boolean[rows][cols];
-
-        // try every tile as a starting point
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-
-                String found = dfsAny(r, c, new StringBuilder());
-
-                // stop when a word is found
-                if (found != null) {
-                    return found;
-                }
-            }
-        }
-
-        return null; // no word exists
-    }
-
-    private String dfsAny(int r, int c, StringBuilder current) {
-
-        // bounds check
-        if (r < 0 || c < 0 || r >= rows || c >= cols) {
-            return null;
-        }
-
-        // tile already used
-        if (used[r][c]) {
-            return null;
-        }
-
-        // add letter
-        current.append(board[r][c]);
-
-        int result = dictionary.searchPrefix(
-                new StringBuilder(current.toString().toLowerCase()));
-
-        // prune if not prefix/word
-        if (result == 0) {
-            current.deleteCharAt(current.length() - 1);
-            return null;
-        }
-
-        // return word
-        if (current.length() >= 3 &&
-                (result == 2 || result == 3)) {
-
-            return current.toString();
-        }
-
-        used[r][c] = true;
-
-        // explore neighbors
-        for (int br = -1; br <= 1; br++) {
-            for (int bc = -1; bc <= 1; bc++) {
-
-                if (br == 0 && bc == 0)
-                    continue;
-
-                String found = dfsAny(r + br, c + bc, current);
-
-                // if neighbor found word, return
-                if (found != null) {
-                    used[r][c] = false;
-                    return found;
-                }
-            }
-        }
-
-        used[r][c] = false;
-
-        // backtrack
-        current.deleteCharAt(current.length() - 1);
-
-        return null;
-    }
-
+    // markWordInBoard: returns the tile path so the UI can highlight it
     @Override
     public ArrayList<Tile> markWordInBoard(char[][] boggleBoard, String word) {
-
-        if (boggleBoard == null || word == null) {
-            return null;
-        }
-
+        if (boggleBoard == null || word == null) { return null; }
         this.board = boggleBoard;
-
         rows = board.length;
         cols = board[0].length;
-
-        for (int r = 0; r < rows; r++) {
+        for (int r = 0; r < rows; r++)
             for (int c = 0; c < cols; c++) {
-
                 used = new boolean[rows][cols];
-
                 ArrayList<Tile> result = dfsMark(r, c, word, 0);
-
-                if (result != null) {
-                    return result;
-                }
+                if (result != null) return result;
             }
-        }
-
         return null;
     }
 
-    // dfs for markwordinboard
-    private ArrayList<Tile> dfsMark(int r, int c,
-            String word,
-            int index) {
+    private ArrayList<Tile> dfsMark(int r, int c, String word, int idx) {
+        if (r < 0 || c < 0 || r >= rows || c >= cols) return null;
+        if (used[r][c]) return null;
+        if (Character.toLowerCase(board[r][c]) != word.charAt(idx)) return null;
 
-        // bounds check
-        if (r < 0 || c < 0 || r >= rows || c >= cols) {
-            return null;
-        }
-
-        // already used
-        if (used[r][c]) {
-            return null;
-        }
-
-        // letter mismatch
-        if (Character.toLowerCase(board[r][c]) != word.charAt(index)) {
-            return null;
-        }
-
-        // create path starting at this tile
         ArrayList<Tile> path = new ArrayList<>();
         path.add(new Tile(r, c));
-
-        // full word matched
-        if (index == word.length() - 1) {
-            return path;
-        }
+        if (idx == word.length() - 1) return path;  // full word matched
 
         used[r][c] = true;
-
-        // explore neighbors
-        for (int br = -1; br <= 1; br++) {
+        for (int br = -1; br <= 1; br++)
             for (int bc = -1; bc <= 1; bc++) {
-
-                if (br == 0 && bc == 0)
-                    continue;
-
-                ArrayList<Tile> next = dfsMark(r + br, c + bc, word, index + 1);
-
+                if (br == 0 && bc == 0) continue;
+                ArrayList<Tile> next = dfsMark(r + br, c + bc, word, idx + 1);
                 if (next != null) {
-
-                    // add current tile to front
                     path.addAll(next);
-
                     used[r][c] = false;
                     return path;
                 }
             }
-        }
-
         used[r][c] = false;
-
         return null;
     }
 
     @Override
     public boolean checkTiles(char[][] boggleBoard, ArrayList<Tile> tiles, String word) {
-        if (tiles == null || word == null) {
-            return false;
-        }
-
-        if (tiles.size() != word.length()) {
-            return false;
-        }
-
+        if (tiles == null || word == null) { return false; }
+        if (tiles.size() != word.length()) { return false; }
         HashSet<String> visited = new HashSet<>();
-
         for (int i = 0; i < tiles.size(); i++) {
-            Tile currentTile = tiles.get(i);
-
-            char boardLetter = boggleBoard[currentTile.row][currentTile.col];
-
-            char wordLetter = word.charAt(i);
-
-            
-            String key = currentTile.row + "," + currentTile.col;
-            //debugging ... no reuse
-            if(visited.contains(key)) {
-                return false;
-            }
-
-            if (Character.toLowerCase(boardLetter) != Character.toLowerCase(wordLetter)) {
-                return false;
-            }
-
-            if (i == 0) {
-                continue;
-            }
-
-            Tile previousTile = tiles.get(i - 1);
-
-            // distance between tiles
-            int rowDifference = Math.abs(currentTile.row - previousTile.row);
-            int colDifference = Math.abs(currentTile.col - previousTile.col);
-
-            // tiles must be adjacent
-            if (rowDifference > 1 || colDifference > 1) {
-                return false;
-            }
+            Tile curr = tiles.get(i);
+            char boardLetter = boggleBoard[curr.row][curr.col];
+            char wordLetter  = word.charAt(i);
+            String key = curr.row + "," + curr.col;
+            if (visited.contains(key)) { return false; }
+            if (Character.toLowerCase(boardLetter) != Character.toLowerCase(wordLetter)) { return false; }
+            if (i == 0) { visited.add(key); continue; }
+            Tile prev = tiles.get(i - 1);
+            int rowDiff = Math.abs(curr.row - prev.row);
+            int colDiff = Math.abs(curr.col - prev.col);
+            if (rowDiff > 1 || colDiff > 1) { return false; }
+            visited.add(key);
         }
-
         return true;
     }
-
-    @Override
-    public String anyWord(char[][] boggleBoard, DictInterface dictionary, int length) {
-        if (boggleBoard == null || dictionary == null || length <= 0) {
-            return null;
-        }
-
-        this.board = boggleBoard;
-        this.dictionary = dictionary;
-
-        rows = board.length;
-        cols = board[0].length;
-
-        used = new boolean[rows][cols];
-
-        for (int r = 0; r < rows; r++) {
-            for (int c = 0; c < cols; c++) {
-
-                String found = dfsAnyLength(r, c,
-                        new StringBuilder(),
-                        length);
-
-                if (found != null) {
-                    return found;
-                }
-            }
-        }
-
-        return null;
-    }
-
-    // dfs for anyword
-    private String dfsAnyLength(int r, int c, StringBuilder current, int length) {
-
-        if (r < 0 || c < 0 || r >= rows || c >= cols) {
-            return null;
-        }
-
-        if (used[r][c]) {
-            return null;
-        }
-
-        current.append(board[r][c]);
-
-        int result = dictionary.searchPrefix(new StringBuilder(current.toString().toLowerCase()));
-
-        if (result == 0) {
-            current.deleteCharAt(current.length() - 1);
-            return null;
-        }
-
-        if (current.length() == length && (result == 2 || result == 3)) {
-            return current.toString();
-        }
-
-        if (current.length() < length) {
-
-            used[r][c] = true;
-
-            for (int br = -1; br <= 1; br++) {
-                for (int bc = -1; bc <= 1; bc++) {
-
-                    if (br == 0 && bc == 0)
-                        continue;
-
-                    String found = dfsAnyLength(r + br, c + bc, current, length);
-
-                    if (found != null) {
-                        used[r][c] = false;
-                        return found;
-                    }
-                }
-            }
-
-            used[r][c] = false;
-        }
-
-        current.deleteCharAt(current.length() - 1);
-
-        return null;
-    }
-
-    private String generateRandomString(int length) {
-        int leftLimit = 97; // letter 'a'
-        int rightLimit = 122; // letter 'z'
-        int targetStringLength = length;
-        Random random = new Random();
-
-        String generatedString = random.ints(leftLimit, rightLimit + 1)
-                .limit(targetStringLength)
-                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
-                .toString().toUpperCase();
-
-        // System.out.println(generatedString);
-        return generatedString;
-    }
-}
-`;
+}`;
 
     const LANG_MAP = {
       sandbox:   'js',
@@ -2535,46 +1588,117 @@ public class BoggleGame implements BoggleGameInterface {
     }
 
     function syntaxHL(code, lang) {
-      let s = escHtml(code);
+      // Tokenise in one pass so already-emitted span tags are never re-matched.
+      // Strategy: scan left-to-right; when we hit a recognised token emit a span;
+      // everything else is emitted as escaped plain text.
 
-      // Comments
-      if (lang === 'java' || lang === 'js') {
-        s = s.replace(/(\/\/[^\n]*)/g, '<span class="cm">$1</span>');
-        s = s.replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="cm">$1</span>');
-      }
-      if (lang === 'asm') {
-        s = s.replace(/(;[^\n]*)/g, '<span class="cm">$1</span>');
+      function esc(t) {
+        return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
       }
 
-      // Strings (already HTML-escaped so use &quot;)
-      s = s.replace(/(&quot;[^&\n]*?&quot;)/g, '<span class="str">$1</span>');
+      const javaKws = new Set(['abstract','assert','boolean','break','byte','case',
+        'catch','char','class','const','continue','default','do','double','else',
+        'enum','extends','final','finally','float','for','goto','if','implements',
+        'import','instanceof','int','interface','long','native','new','package',
+        'private','protected','public','return','short','static','strictfp','super',
+        'switch','synchronized','this','throw','throws','transient','try','void',
+        'volatile','while','null','true','false',
+        'HashMap','HashSet','ArrayList','LinkedList','Queue','PriorityQueue',
+        'String','StringBuilder','Scanner','File','Random']);
 
-      // Keywords
-      const kws = lang === 'asm'
-        ? ['push','pop','jr','jal','lw','sw','lb','sb','li','la',
-           'add','sub','mul','div','beq','bne','blt','bgt','ble','bge',
-           'beqz','j','move','neg','abs','srl','sra']
-        : ['function','return','const','let','var','for','while',
-           'if','else','new','this','null','true','false','void',
-           'int','double','String','boolean','static','class',
-           'public','private','HashMap','HashSet','Queue',
-           'PriorityQueue','LinkedList','ArrayList',
-           'Override','extends','implements','import'];
+      const asmKws = new Set(['push','pop','jr','jal','lw','sw','lb','sb','li','la',
+        'lstr','add','sub','mul','div','beq','bne','blt','bgt','ble','bge','beqz',
+        'bnez','j','move','neg','abs','srl','sra','sll','and','or','xor','not',
+        'syscall','nop']);
 
-      kws.forEach(kw => {
-        s = s.replace(
-          new RegExp('\\b(' + kw + ')\\b', 'g'),
-          '<span class="kw">$1</span>'
-        );
-      });
+      const jsKws = new Set(['function','return','const','let','var','for','while',
+        'if','else','new','this','null','true','false','void','typeof','instanceof',
+        'class','extends','import','export','default','break','continue','switch',
+        'case','throw','try','catch','finally','async','await','of','in']);
 
-      // Annotations (@Override etc.)
-      s = s.replace(/(@\w+)/g, '<span class="ann">$1</span>');
+      const kws = lang === 'asm' ? asmKws : lang === 'java' ? javaKws : jsKws;
 
-      // Numbers
-      s = s.replace(/\b(\d+\.?\d*)\b/g, '<span class="num">$1</span>');
+      let out = '';
+      let i = 0;
+      const n = code.length;
 
-      return s;
+      while (i < n) {
+        // Single-line comment
+        if ((lang === 'java' || lang === 'js') && code[i] === '/' && code[i+1] === '/') {
+          let end = code.indexOf('\n', i);
+          if (end === -1) end = n;
+          out += '<span class="cm">' + esc(code.slice(i, end)) + '</span>';
+          i = end;
+          continue;
+        }
+        // Block comment
+        if ((lang === 'java' || lang === 'js') && code[i] === '/' && code[i+1] === '*') {
+          let end = code.indexOf('*/', i + 2);
+          if (end === -1) end = n - 2; else end += 2;
+          out += '<span class="cm">' + esc(code.slice(i, end)) + '</span>';
+          i = end;
+          continue;
+        }
+        // ASM comment
+        if (lang === 'asm' && code[i] === ';') {
+          let end = code.indexOf('\n', i);
+          if (end === -1) end = n;
+          out += '<span class="cm">' + esc(code.slice(i, end)) + '</span>';
+          i = end;
+          continue;
+        }
+        // ASM # comment
+        if (lang === 'asm' && code[i] === '#') {
+          let end = code.indexOf('\n', i);
+          if (end === -1) end = n;
+          out += '<span class="cm">' + esc(code.slice(i, end)) + '</span>';
+          i = end;
+          continue;
+        }
+        // String literal
+        if (code[i] === '"') {
+          let j = i + 1;
+          while (j < n && !(code[j] === '"' && code[j-1] !== '\\')) j++;
+          j++;
+          out += '<span class="str">' + esc(code.slice(i, j)) + '</span>';
+          i = j;
+          continue;
+        }
+        // Annotation
+        if (code[i] === '@') {
+          let j = i + 1;
+          while (j < n && /\w/.test(code[j])) j++;
+          out += '<span class="ann">' + esc(code.slice(i, j)) + '</span>';
+          i = j;
+          continue;
+        }
+        // Word (keyword, identifier, or number-prefixed)
+        if (/[a-zA-Z_$]/.test(code[i])) {
+          let j = i;
+          while (j < n && /[\w$]/.test(code[j])) j++;
+          const word = code.slice(i, j);
+          if (kws.has(word)) {
+            out += '<span class="kw">' + esc(word) + '</span>';
+          } else {
+            out += esc(word);
+          }
+          i = j;
+          continue;
+        }
+        // Number
+        if (/[0-9]/.test(code[i])) {
+          let j = i;
+          while (j < n && /[0-9a-fA-FxX_.]/.test(code[j])) j++;
+          out += '<span class="num">' + esc(code.slice(i, j)) + '</span>';
+          i = j;
+          continue;
+        }
+        // Everything else: emit escaped
+        out += esc(code[i]);
+        i++;
+      }
+
+      return out;
     }
 
     function showSource(key) {
@@ -3272,7 +2396,7 @@ public class BoggleGame implements BoggleGameInterface {
           setFeedback('"' + word.toUpperCase() + '" — valid word but not on this board.', '#f7a53b');
           renderBoard();
         } else {
-          setFeedback('&#10003; "' + word.toUpperCase() + '" found! (' + word.length + ' letters)', '#3bf7c8');
+          setFeedback('\u2713 "' + word.toUpperCase() + '" found! (' + word.length + ' letters)', '#3bf7c8');
           highlightWord(word);
         }
         input.value = '';
